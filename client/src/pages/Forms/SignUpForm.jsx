@@ -82,6 +82,7 @@ const SignUpForm = () => {
           email: formData.email,
           password: formData.password,
           name: formData.name,
+          
           rollno: formData.rollno,
           type: formData.type,
           extraFields: formData.extraFields,

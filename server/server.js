@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import ConnectDB from "./db/ConnectDB.js";
 import userLogin from "./routes/LoginRoute.js";
 import useSignin from "./routes/SignUpRoute.js";
+import useForgetPass from "./routes/ForgetPassRoute.js";
+import useComplaint from "./routes/CompleteRoute.js";
 import env from 'dotenv';
 import cors from "cors";
 
@@ -20,6 +22,8 @@ ConnectDB();
 
 app.use(userLogin);
 app.use(useSignin);
+app.use(useForgetPass);
+app.use(useComplaint);
 
 
 const PORT = 4000 ;
