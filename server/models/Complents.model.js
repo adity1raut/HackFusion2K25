@@ -20,7 +20,7 @@ const ComplentsSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        default: 'unread'
+        default: 'pending'
     }
 }, {
     timestamps: true

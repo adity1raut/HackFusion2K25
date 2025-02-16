@@ -76,13 +76,8 @@ const profile = async (req, res) => {
   const updateProfile = async (req, res) => {
     try {
     
-      const { name, email, branch } = req.body;
+      const { name, email, branch  , year } = req.body;
       const profileImage = req.file;
-  
-    //   if (!rollno) {
-    //     return res.status(400).json({ error: true, message: 'Roll number is required.' });
-    //   }
-  
       // Find the user by rollno
       const user = await User.findOne({ email });
       if (!user) {
@@ -93,8 +88,7 @@ const profile = async (req, res) => {
       if (name) user.name = name;
       if (email) user.email = email;
       if (branch) user.branch = branch;
-  
-      // Handle profile image upload to Cloudinary
+      if (year) user.year = year;
       if (profileImage) {
         const uploadResponse = await cloudinary.uploader.upload(profileImage.path, {
           folder: 'profile_pictures',
@@ -103,11 +97,9 @@ const profile = async (req, res) => {
         });
         user.profile = uploadResponse.secure_url;
       }
-  
-      // Save the updated user
+
       await user.save();
-  
-      // Return success response
+
       res.status(200).json({ success: true, message: 'Profile updated successfully.', data: user });
     } catch (error) {
       console.error('Error updating profile:', error);

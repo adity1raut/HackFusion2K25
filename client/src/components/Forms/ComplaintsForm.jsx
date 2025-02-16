@@ -85,7 +85,7 @@ const ComplaintsForm = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
             <div className="container mx-auto px-4 py-8 pt-24">
                 <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-12 text-center">
-                    Complaints Management System
+                    Complaints Management 
                 </h1>
 
                 <div className="flex flex-col lg:flex-row gap-8">

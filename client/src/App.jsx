@@ -12,6 +12,7 @@ import ComplaintsForm from "./components/Forms/ComplaintsForm";
 import LeaveApplicationForm from './components/Forms/LeaveApplicationForm';
 import DoctorAppointmentForm from './components/Other/DoctorAppointmentForm';
 import FacultyAvailabilityForm from './components/Other/FacultyAvailabilityForm';
+import ElectionData from './components/Other/ElectionData';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path="/forgot_password" element={<ForgetPassFrom />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/election" element={<ElectionData />} />
                 <Route path="/complaints" element={<ComplaintsForm />} />
                 <Route path="/leave-application" element={<LeaveApplicationForm />} />
                 <Route path="/doctor-appointment" element={<DoctorAppointmentForm />} />

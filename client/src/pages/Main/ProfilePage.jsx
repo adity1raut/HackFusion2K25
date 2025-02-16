@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Card from "../../components/Other/Card";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link } from 'react-router-dom';
 
 const EditProfileModal = ({ isOpen, onClose, studentInfo, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -185,7 +185,7 @@ const StudentProfile = () => {
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     fetchProfile();
   }, [navigate]);
@@ -194,7 +194,7 @@ const StudentProfile = () => {
     try {
       const token = localStorage.getItem('token');
       const email = localStorage.getItem('email');
-      
+
       if (!token || !email) {
         navigate('/login');
         return;
@@ -220,7 +220,7 @@ const StudentProfile = () => {
         };
         setStudentInfo(transformedData);
       }
-      
+
       setLoading(false);
     } catch (err) {
       if (err.response?.status === 401) {
@@ -270,7 +270,7 @@ const StudentProfile = () => {
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
           <h2 className="text-red-600 text-xl font-bold mb-4">Error Loading Profile</h2>
           <p className="text-gray-700">{error}</p>
-          <button 
+          <button
             onClick={() => navigate('/login')}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
@@ -282,7 +282,7 @@ const StudentProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-cyan-500 to-green-500 p-4 pt-24 md:p-8">
+    <div className="min-h-screen bg-gradient-to-r from-cyan-100 to-green-200 p-4 pt-24 md:p-8">
       <div className="max-w-5xl pt-20 mx-auto">
         <h1 className="text-3xl md:text-4xl text-purple-600 text-center font-bold mb-2">
           Student Profile
@@ -310,6 +310,12 @@ const StudentProfile = () => {
               >
                 Edit Profile
               </button>
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Logout
+              </button>
             </div>
           </Card>
 
@@ -327,7 +333,26 @@ const StudentProfile = () => {
                 ))}
               </div>
             </Card>
+            <Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <Link to="/complaints"> <button
+                  className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Complaints
+                </button></Link>
+
+                <Link to="/leave-application"> <button
+                  className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Leave Application
+                </button></Link>
+
+              </div>
+            </Card>
           </div>
+
+
         </div>
 
         <EditProfileModal

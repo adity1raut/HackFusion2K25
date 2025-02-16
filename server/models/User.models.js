@@ -34,6 +34,10 @@ const UserSchema = new mongoose.Schema(
         type: String,
         default: "None",
     },
+    year :{
+        type: String,
+        default: "None",
+    },
     createdAt: {
         type: Date,
         default: Date

@@ -3,10 +3,9 @@ import Complents from '../models/Complents.model.js'; // Ensure the correct file
 
 const router = express.Router();
 
-// POST /api/complaints - Submit a new complaint
 router.post('/api/complaints', async (req, res) => {
     try {
-        // Validate request body
+   
         const { name, email, subject, message } = req.body;
 
         if (!name || !email || !subject || !message) {
