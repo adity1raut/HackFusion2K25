@@ -30,6 +30,10 @@ const UserSchema = new mongoose.Schema(
         required: true,
         default: "Student",
     },
+    branch :{
+        type: String,
+        default: "None",
+    },
     createdAt: {
         type: Date,
         default: Date

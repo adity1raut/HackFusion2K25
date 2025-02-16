@@ -54,62 +54,68 @@ const login = async (req, res) => {
 
 const profile = async (req, res) => {
     try {
-        const { username } = req.params;
-
-        if (!username) {
-            return res.status(400).json({ error: true, message: 'Username is required.' });
-        }
-
-        const user = await User.findOne({ username }).select('-password').lean();  // Fetch user from DB
-        if (!user) {
-            return res.status(404).json({ error: true, message: 'User not found.' });
-        }
-
-        res.status(200).json({ success: true, data: user });  // Return user data
+      const { email } = req.params; // Get rollno from the request parameters
+      if (!email) {
+        return res.status(400).json({ error: true, message: 'Roll number is required.' });
+      }
+  
+      // Find the user by rollno and exclude the password field
+      const user = await User.findOne({ email }).select('-password').lean();
+      if (!user) {
+        return res.status(404).json({ error: true, message: 'User not found.' });
+      }
+  
+      // Return the user profile
+      res.status(200).json({ success: true, data: user });
     } catch (error) {
-        console.error('Error fetching user profile:', error);
-        res.status(500).json({ error: true, message: 'Server error, please try again later.' });
+      console.error('Error fetching user profile:', error);
+      res.status(500).json({ error: true, message: 'Server error, please try again later.' });
     }
-};
-
-const updateProfile = async (req, res) => {
+  };
+  
+  const updateProfile = async (req, res) => {
     try {
-        const { username } = req.params;
-        const { firstName, lastName, email } = req.body;
-        const profileImage = req.file;
-
-        if (!username) {
-            return res.status(400).json({ error: true, message: 'Username is required.' });
-        }
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(404).json({ error: true, message: 'User not found.' });
-        }
-
-        if (firstName) user.firstName = firstName;
-        if (lastName) user.lastName = lastName;
-        if (email) user.email = email;
-
-        if (profileImage) {
-            const uploadResponse = await cloudinary.uploader.upload(profileImage.path, {
-                folder: 'profile_pictures',
-                use_filename: true,
-                unique_filename: false,
-            });
-            user.profileImage = uploadResponse.secure_url;
-        }
-
-        await user.save();
-
-        res.status(200).json({ success: true, message: 'Profile updated successfully.', data: user });
+    
+      const { name, email, branch } = req.body;
+      const profileImage = req.file;
+  
+    //   if (!rollno) {
+    //     return res.status(400).json({ error: true, message: 'Roll number is required.' });
+    //   }
+  
+      // Find the user by rollno
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ error: true, message: 'User not found.' });
+      }
+  
+      // Update user fields if provided
+      if (name) user.name = name;
+      if (email) user.email = email;
+      if (branch) user.branch = branch;
+  
+      // Handle profile image upload to Cloudinary
+      if (profileImage) {
+        const uploadResponse = await cloudinary.uploader.upload(profileImage.path, {
+          folder: 'profile_pictures',
+          use_filename: true,
+          unique_filename: false,
+        });
+        user.profile = uploadResponse.secure_url;
+      }
+  
+      // Save the updated user
+      await user.save();
+  
+      // Return success response
+      res.status(200).json({ success: true, message: 'Profile updated successfully.', data: user });
     } catch (error) {
-        console.error('Error updating profile:', error);
-        res.status(500).json({ error: true, message: 'Server error, please try again later.' });
+      console.error('Error updating profile:', error);
+      res.status(500).json({ error: true, message: 'Server error, please try again later.' });
     }
-};
-
-router.post('/api/login', login);
-router.get('/api/profile/:username', authenticateToken, profile);
-router.put('/api/profile/:username', upload.single('profileImage'), updateProfile);
-
-export default router;
+  };
+  router.post('/api/login', login); // Login
+  router.get('/api/profile/:email', authenticateToken, profile); // Fetch profile
+  router.put('/api/profile/:email', authenticateToken, upload.single('profileImage'), updateProfile); // Update profile
+  
+  export default router;

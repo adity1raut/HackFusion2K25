@@ -5,26 +5,25 @@ import SignUpForm from './pages/Forms/SignUpForm'
 import LoginForm from './pages/Forms/LoginForm'
 import PrivateRoute from '../src/utils/PrivateRoute'
 import ProfilePage from './pages/Main/ProfilePage'
+import Navbar from './pages/Navbar/Navbar'
+import Dhasboard from './pages/Main/Dhasboard';
 
 function App() {
   return (
     <div>
       <AuthProvider>
         <BrowserRouter>
-          {/* <Navbar /> */}
-
-          <Routes>
-            {/* <Route path="/forgot_password" element={<Fo />} /> */}
-            <Route path="/signup" element={<SignUpForm />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route element={<PrivateRoute />}>
-              <Route path="/profile" element={<ProfilePage />} />
-             {/* <Route path="/uplode-video" element={<VideoUpload />} />
-              <Route path="/store" element={<StorePage />} />
-              <Route path="/live" element={<LivePage />} />
-              <Route path="/live-stream" element={<LiveStream />} /> */}
-            </Route>
-          </Routes>
+          <div className='min-h-screen'>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Dhasboard />} />
+              <Route path="/signup" element={<SignUpForm />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route element={<PrivateRoute />}>
+                <Route path="/profile" element={<ProfilePage />} />
+              </Route>
+            </Routes>
+          </div>
         </BrowserRouter>
       </AuthProvider>
     </div>
