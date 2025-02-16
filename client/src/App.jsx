@@ -8,6 +8,10 @@ import ProfilePage from './pages/Main/ProfilePage'
 import Navbar from './pages/Navbar/Navbar'
 import Dhasboard from './pages/Main/Dhasboard';
 import ForgetPassFrom from './pages/Forms/ForgetPassFrom';
+import ComplaintsForm from "./components/Forms/ComplaintsForm";
+import LeaveApplicationForm from './components/Forms/LeaveApplicationForm';
+import DoctorAppointmentForm from './components/Other/DoctorAppointmentForm';
+import FacultyAvailabilityForm from './components/Other/FacultyAvailabilityForm';
 
 function App() {
   return (
@@ -23,6 +27,10 @@ function App() {
               <Route path="/forgot_password" element={<ForgetPassFrom />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/complaints" element={<ComplaintsForm />} />
+                <Route path="/leave-application" element={<LeaveApplicationForm />} />
+                <Route path="/doctor-appointment" element={<DoctorAppointmentForm />} />
+                <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
               </Route>
             </Routes>
           </div>

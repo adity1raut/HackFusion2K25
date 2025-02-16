@@ -21,6 +21,7 @@ const EditProfileModal = ({ isOpen, onClose, studentInfo, onUpdate }) => {
         email: studentInfo.email || '',
         branch: studentInfo.branch || '',
         rollno: studentInfo.rollno || '',
+        year: studentInfo.year || '',
         profile: null
       });
     }
@@ -52,6 +53,7 @@ const EditProfileModal = ({ isOpen, onClose, studentInfo, onUpdate }) => {
       formDataToSend.append('email', formData.email);
       formDataToSend.append('branch', formData.branch);
       formDataToSend.append('rollno', formData.rollno);
+      formDataToSend.append('year', formData.year);
       if (formData.profile) {
         formDataToSend.append('profileImage', formData.profile);
       }
@@ -110,6 +112,19 @@ const EditProfileModal = ({ isOpen, onClose, studentInfo, onUpdate }) => {
               type="email"
               name="email"
               value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Acadamic Year
+            </label>
+            <input
+              type="text"
+              name="year"
+              value={formData.year}
               onChange={handleChange}
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
