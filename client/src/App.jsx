@@ -16,6 +16,8 @@ import ElectionData from './components/Other/ElectionData';
 import FacultyLogin from './pages/Forms/FacultyLogin';
 import FacultyProfile from './pages/Main/FalcultyProfile';
 import FacultySignIn from './pages/Forms/FacultySignForm';
+import GroundBooking from './components/Forms/GroundBooking';
+import CandidateElectionForm from './components/Forms/ElectionRegistation';
 
 function App() {
   return (
@@ -38,7 +40,9 @@ function App() {
                 <Route path="/complaints" element={<ComplaintsForm />} />
                 <Route path="/leave-application" element={<LeaveApplicationForm />} />
                 <Route path="/doctor-appointment" element={<DoctorAppointmentForm />} />
+                <Route path="/bookings" element={<GroundBooking />} />
                 <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
+                <Route path="/condidate-election-form" element={<CandidateElectionForm />} />
               </Route>
             </Routes>
           </div>

@@ -6,6 +6,7 @@ import useSignin from "./routes/SignUpRoute.js";
 import useForgetPass from "./routes/ForgetPassRoute.js";
 import useElection from "./routes/ElectionRoute.js"
 import useComplaint from "./routes/CompleteRoute.js"
+import useElectionCandidate from "./routes/Election/ElectionRegistatonRoute.js"
 import env from 'dotenv';
 import cors from "cors";
 
@@ -27,8 +28,8 @@ app.use(useSignin);
 app.use(useForgetPass);
 app.use(useComplaint);
 app.use(useElection);
-
-
+app.use(useElectionCandidate)
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const PORT = 4000 ;
 app.listen(PORT, () => {

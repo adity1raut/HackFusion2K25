@@ -38,7 +38,7 @@ function ElectionCandidate() {
     <div>
        <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">
-            Faculty Availabilities
+           Election candidate
           </h2>
 
           <div className="overflow-x-auto">
@@ -52,11 +52,14 @@ function ElectionCandidate() {
                     Department
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Day
+                  Post
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Time Slots
+                    Image
                   </th>
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acadamic Yera
+                  </th> */}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ElectionTable from "../Tables/ElectionCandidate"
 
 function ElectionData() {
   const [step, setStep] = useState(1);
@@ -97,6 +98,7 @@ function ElectionData() {
   return (
     <div className="flex flex-col items-center">
       <div className="w-full max-w-4xl mt-4 pt-24 px-4">
+      <ElectionTable />
         {/* Add your election candidate component here if needed */}
         {step === 1 && (
           <div className="mt-6 text-center">

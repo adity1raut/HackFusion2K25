@@ -85,7 +85,7 @@ const Navbar = () => {
                             <li><NavButton path="/dashboard">HOME</NavButton></li>
                             <li><NavButton path="/profile">PROFILE</NavButton></li>
                             <li><NavButton path="/election">Election</NavButton></li>
-                            <li><NavButton path="/booking">Booking</NavButton></li>
+                            <li><NavButton path="/bookings">Booking</NavButton></li>
                             <li><NavButton path="/logout" isLogout={true}>LOGOUT</NavButton></li>
                         </>
                     )}
@@ -117,7 +117,7 @@ const Navbar = () => {
                                 <li><NavButton path="/dashboard">HOME</NavButton></li>
                                 <li><NavButton path="/profile">PROFILE</NavButton></li>
                                 <li><NavButton path="/election">Election</NavButton></li>
-                                <li><NavButton path="/booking">Booking</NavButton></li>
+                                <li><NavButton path="/bookings">Booking</NavButton></li>
                                 <li><NavButton path="/logout" isLogout={true}>LOGOUT</NavButton></li>
                             </>
                         )}

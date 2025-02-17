@@ -1,12 +1,14 @@
-
 import mongoose from "mongoose";
 
-const BookingSchema = mongoose.Schema({
-
+const BookingSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-    },  
+    },
+    email: {
+        type: String,
+        required: true,
+    },
     phone: {
         type: String,
         required: true,
@@ -23,15 +25,18 @@ const BookingSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    venue :{
+    venue: {
         type: String,
         required: true,
-    } ,
+    },
+    lastdate: {
+        type: String,
+    },
     status: {
         type: String,
-        default: "unread",
+        default: "pending",
     },
-    }, {
+}, {
     timestamps: true,
 });
 

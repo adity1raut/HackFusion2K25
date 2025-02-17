@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { toast , ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LeaveTable from '../Tables/LeaveTable';
 
 const LeaveApplicationForm = () => {
   const [formData, setFormData] = useState({
@@ -20,26 +21,6 @@ const LeaveApplicationForm = () => {
       leave_end_date: ''
     }
   });
-
-  const [applications, setApplications] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  useEffect(() => {
-    fetchApplications();
-  }, [page]);
-
-  const fetchApplications = async () => {
-    try {
-      const response = await axios.get(`http://localhost:4000/api/leave-applications?page=${page}&limit=10`);
-      setApplications(response.data.data);
-      setTotalPages(response.data.pagination.totalPages);
-    } catch (error) {
-      console.error('Error fetching applications:', error);
-      toast('Error fetching leave applications. Please try again.');
-    }
-  };
-
   const handleChange = (e, section) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -80,12 +61,12 @@ const LeaveApplicationForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div> <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="container mx-auto px-4 py-8 pt-24">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-12 text-center">Leave Application Form</h1>
-        
+
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Form Section */}
+
           <div className="lg:w-1/3">
             <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 sticky top-8 border border-gray-100">
               {/* Student Information */}
@@ -211,67 +192,16 @@ const LeaveApplicationForm = () => {
           </div>
 
           {/* Applications List */}
-          <div className="lg:w-2/3">
-            <div className="bg-white/80 backdrop-blur-sm shadow-lg rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-brown-800 mb-6">Leave Applications</h2>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-brown-200">
-                  <thead className="bg-brown-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-brown-500 uppercase tracking-wider">Roll No</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-brown-500 uppercase tracking-wider">Student Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-brown-500 uppercase tracking-wider">Start Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-brown-500 uppercase tracking-wider">End Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-brown-500 uppercase tracking-wider">Reason</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-brown-200">
-                    {applications.map((application, index) => (
-                      <tr key={index} className="hover:bg-brown-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brown-700">{application.student_information.roll_no}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brown-700">{application.student_information.student_name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brown-700">
-                          {new Date(application.leave_details.leave_start_date).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brown-700">
-                          {new Date(application.leave_details.leave_end_date).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-brown-700">
-                          <div className="max-w-xs truncate">{application.leave_details.reason_for_leave}</div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pagination */}
-              <div className="mt-6 flex items-center justify-between border-t border-brown-200 pt-4">
-                <button
-                  onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-                  disabled={page === 1}
-                  className="px-4 py-2 border border-brown-300 rounded-md text-sm font-medium text-brown-700 bg-white hover:bg-brown-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <span className="text-sm text-brown-700">
-                  Page {page} of {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={page === totalPages}
-                  className="px-4 py-2 border border-brown-300 rounded-md text-sm font-medium text-brown-700 bg-white hover:bg-brown-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
+          <div className="flex w-full justify-center py-10">
+            <div className="w-full lg:w-2/3">
+              <LeaveTable />
             </div>
           </div>
+
         </div>
       </div>
       <ToastContainer />
-    </div>
+    </div></div>
   );
 };
 
