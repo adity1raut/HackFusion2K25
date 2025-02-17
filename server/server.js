@@ -5,19 +5,20 @@ import userLogin from "./routes/LoginRoute.js";
 import useSignin from "./routes/SignUpRoute.js";
 import useForgetPass from "./routes/ForgetPassRoute.js";
 import useElection from "./routes/ElectionRoute.js"
-import useComplaint from "./routes/CompleteRoute.js";
+import useComplaint from "./routes/CompleteRoute.js"
 import env from 'dotenv';
 import cors from "cors";
+
 
 env.config();
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
+app.use(cors());
 
 ConnectDB();
 
@@ -26,6 +27,7 @@ app.use(useSignin);
 app.use(useForgetPass);
 app.use(useComplaint);
 app.use(useElection);
+
 
 
 const PORT = 4000 ;

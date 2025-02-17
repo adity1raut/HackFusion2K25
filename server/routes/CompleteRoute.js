@@ -3,9 +3,9 @@ import Complents from '../models/Complents.model.js'; // Ensure the correct file
 
 const router = express.Router();
 
+// POST route to submit a new complaint
 router.post('/api/complaints', async (req, res) => {
     try {
-   
         const { name, email, subject, message } = req.body;
 
         if (!name || !email || !subject || !message) {
@@ -31,6 +31,26 @@ router.post('/api/complaints', async (req, res) => {
         });
     } catch (error) {
         console.error('Error submitting complaint:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// GET route to retrieve all complaints
+router.get('/api/complaints', async (req, res) => {
+    try {
+        // Retrieve all complaints from the database
+        const complaints = await Complents.find();
+
+        // Convert the complaints to a map with id as the key
+        const complaintsMap = new Map(complaints.map(complaint => [complaint._id, complaint]));
+
+        // Respond with the complaints data
+        res.status(200).json({
+            message: 'Complaints retrieved successfully',
+            data: Array.from(complaintsMap.values())
+        });
+    } catch (error) {
+        console.error('Error retrieving complaints:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

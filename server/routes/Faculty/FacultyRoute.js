@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import FacultyAvailability from '../models/Faculty.models';
+import FacultyAvailability from '../../models/Faculty.models';
 
 const router = express.Router();
 

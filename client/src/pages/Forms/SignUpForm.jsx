@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -11,20 +12,16 @@ const SignUpForm = () => {
     type: "",
     otp: "",
     password: "",
-    confirmPassword: "",
-    extraFields: [],
+    confirmPassword: ""
   });
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e, index) => {
-    if (index !== undefined) {
-      const updatedFields = [...formData.extraFields];
-      updatedFields[index].value = e.target.value;
-      setFormData({ ...formData, extraFields: updatedFields });
-    } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const validateFields = () => {
@@ -33,27 +30,27 @@ const SignUpForm = () => {
     const rollnoPattern = /^\d{4}[a-zA-Z]{3}\d{3}$/;
 
     if (!name || !rollno || !email || !type) {
-      toast.error("Name, Roll Number, Email, and Type are required.");
+      toast.error("All fields are required.");
       return false;
     }
 
     if (!emailPattern.test(email)) {
-      toast.error("Email must be from the sggs.ac.in domain.");
+      toast.error("Please use your SGGS email address.");
       return false;
     }
 
     if (!rollnoPattern.test(rollno)) {
-      toast.error("Roll Number must follow the format YYYYXXXNNN.");
+      toast.error("Invalid roll number format (YYYYXXXNNN).");
       return false;
     }
 
     if (otpSent) {
       if (!password || password.length < 6) {
-        toast.error("Password must be at least 6 characters long.");
+        toast.error("Password must be at least 6 characters.");
         return false;
       }
       if (password !== confirmPassword) {
-        toast.error("Passwords do not match.");
+        toast.error("Passwords don't match.");
         return false;
       }
     }
@@ -64,95 +61,101 @@ const SignUpForm = () => {
     e.preventDefault();
     if (!validateFields()) return;
     setLoading(true);
+
     try {
       if (!otpSent) {
         const response = await axios.post("http://localhost:4000/api/send-otp", {
           email: formData.email,
           name: formData.name,
           rollno: formData.rollno,
-          type: formData.type,
+          type: formData.type
         });
         if (response.status === 200) {
           setOtpSent(true);
           toast.success("OTP sent to your email!");
         }
       } else {
-        // Create account using axios
-        const signupResponse = await axios.post("http://localhost:4000/api/users", {
-          email: formData.email,
-          password: formData.password,
-          name: formData.name,
-          
-          rollno: formData.rollno,
-          type: formData.type,
-          extraFields: formData.extraFields,
+        const response = await axios.post("http://localhost:4000/api/users", {
+          ...formData
         });
-        if (signupResponse.status === 200) {
+        if (response.status === 200) {
           toast.success("Account created successfully!");
           setTimeout(() => {
             window.location.href = "/login";
           }, 2000);
         }
       }
-    } catch (err) {
-      toast.error("An error occurred.");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "An error occurred.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-4">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-2xl">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Sign Up</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-semibold text-gray-900">Create Account</h2>
+          <p className="mt-2 text-gray-600">Please fill in your details</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Full Name</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Full Name
+            </label>
             <input
               type="text"
               name="name"
-              placeholder="Full Name"
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="John Doe"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Roll Number</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Roll Number
+            </label>
             <input
               type="text"
               name="rollno"
-              placeholder="2024xxx012"
               value={formData.rollno}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="2024XXX012"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">College Email</label>
+            <label className="block text-sm font-medium text-gray-700">
+              College Email
+            </label>
             <input
               type="email"
               name="email"
-              placeholder="2024xxx014@sggs.ac.in"
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="email@sggs.ac.in"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Type</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Type
+            </label>
             <select
               name="type"
               value={formData.type}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select Type</option>
               <option value="student">Student</option>
@@ -161,72 +164,73 @@ const SignUpForm = () => {
           </div>
 
           {otpSent && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700">OTP</label>
-              <input
-                type="text"
-                name="otp"
-                placeholder="Enter OTP"
-                value={formData.otp}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
-
-          {otpSent && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Password</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  OTP
+                </label>
+                <input
+                  type="text"
+                  name="otp"
+                  value={formData.otp}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter OTP"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
-                  placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="••••••••"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
                 <input
                   type="password"
                   name="confirmPassword"
-                  placeholder="Confirm Password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="••••••••"
                 />
               </div>
             </>
           )}
 
-          {formData.extraFields.map((field, index) => (
-            <div key={index}>
-              <label className="block text-sm font-medium text-gray-700">Custom Field</label>
-              <input
-                type="text"
-                placeholder="Custom Field"
-                value={field.value}
-                onChange={(e) => handleChange(e, index)}
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          ))}
-
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
           >
-            {loading ? "Processing..." : otpSent ? "Create Account" : "Send OTP"}
+            {loading ? 'Processing...' : otpSent ? 'Create Account' : 'Send OTP'}
           </button>
         </form>
-        <ToastContainer position="top-right" autoClose={3000} />
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/login" className="text-blue-600 hover:text-blue-500">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

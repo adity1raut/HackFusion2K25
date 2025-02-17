@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,17 +11,26 @@ const ComplaintsForm = () => {
         status: 'unread'
     });
 
-    const [complaints, setComplaints] = useState([]);
+    const [complaints, setComplaints] = useState({}); // Store complaints as a JSON object
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        fetchComplaints();
-    }, []);
-
+    // Fetch complaints using fetch API
     const fetchComplaints = async () => {
         try {
-            const response = await axios.get('http://localhost:4000/api/complaints');
-            setComplaints(response.data);
+            const response = await fetch('http://localhost:4000/api/complaints');
+            const complaintsData = await response.json();
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch complaints');
+            }
+
+            // Ensure the data is a valid JSON object
+            if (complaintsData && typeof complaintsData === 'object' && !Array.isArray(complaintsData)) {
+                setComplaints(complaintsData); // Set complaints as JSON object
+            } else {
+                console.error('Fetched data is not a valid JSON object:', complaintsData);
+                setComplaints({});
+            }
         } catch (error) {
             toast.error('Failed to fetch complaints! Please try again.', {
                 position: "top-right",
@@ -34,6 +42,11 @@ const ComplaintsForm = () => {
             });
         }
     };
+
+    // Call fetchComplaints when component mounts
+    useEffect(() => {
+        fetchComplaints();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -54,13 +67,33 @@ const ComplaintsForm = () => {
         });
 
         try {
-            await axios.post('http://localhost:4000/api/complaints', formData);
+            const response = await fetch('http://localhost:4000/api/complaints', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const newComplaint = await response.json();
+
+            if (!response.ok) {
+                throw new Error('Failed to submit complaint');
+            }
+
+            // Update complaints state by adding the new complaint to the JSON object
+            setComplaints(prevComplaints => ({
+                ...prevComplaints,
+                [newComplaint.id]: newComplaint // Assuming newComplaint has an "id" property
+            }));
+
             toast.update(loadingToast, {
                 render: "Complaint submitted successfully! 🎉",
                 type: "success",
                 isLoading: false,
                 autoClose: 3000
             });
+
             setFormData({
                 name: '',
                 email: '',
@@ -68,7 +101,6 @@ const ComplaintsForm = () => {
                 message: '',
                 status: 'unread'
             });
-            fetchComplaints();
         } catch (error) {
             toast.update(loadingToast, {
                 render: "Failed to submit complaint! Please try again.",
@@ -85,7 +117,7 @@ const ComplaintsForm = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
             <div className="container mx-auto px-4 py-8 pt-24">
                 <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-12 text-center">
-                    Complaints Management 
+                    Complaints Management
                 </h1>
 
                 <div className="flex flex-col lg:flex-row gap-8">
@@ -93,7 +125,6 @@ const ComplaintsForm = () => {
                     <div className="lg:w-1/3">
                         <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 sticky top-8 border border-gray-100">
                             <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">Submit a Complaint</h2>
-                            
                             <div className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Name<span className="text-red-500">*</span></label>
@@ -147,9 +178,7 @@ const ComplaintsForm = () => {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className={`w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-lg shadow-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-[1.02] mt-8 text-lg uppercase tracking-wide ${
-                                    isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-                                }`}
+                                className={`w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-lg shadow-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-[1.02] mt-8 text-lg uppercase tracking-wide ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Submit Complaint'}
                             </button>
@@ -160,7 +189,6 @@ const ComplaintsForm = () => {
                     <div className="lg:w-2/3">
                         <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 border border-gray-100">
                             <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">Complaints Status</h2>
-                            
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead>
@@ -170,10 +198,11 @@ const ComplaintsForm = () => {
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {complaints.map((complaint, index) => (
+                                        {Object.values(complaints).map((complaint, index) => (
                                             <tr key={index} className="hover:bg-gray-50 transition-colors">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{complaint.name}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{complaint.email}</td>
@@ -191,6 +220,9 @@ const ComplaintsForm = () => {
                                                     >
                                                         {complaint.status}
                                                     </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                    {complaint.createdAt ? new Date(complaint.createdAt).toLocaleString() : 'N/A'}
                                                 </td>
                                             </tr>
                                         ))}

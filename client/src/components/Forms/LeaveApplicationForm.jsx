@@ -36,7 +36,7 @@ const LeaveApplicationForm = () => {
       setTotalPages(response.data.pagination.totalPages);
     } catch (error) {
       console.error('Error fetching applications:', error);
-      alert('Error fetching leave applications. Please try again.');
+      toast('Error fetching leave applications. Please try again.');
     }
   };
 

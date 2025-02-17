@@ -13,6 +13,9 @@ import LeaveApplicationForm from './components/Forms/LeaveApplicationForm';
 import DoctorAppointmentForm from './components/Other/DoctorAppointmentForm';
 import FacultyAvailabilityForm from './components/Other/FacultyAvailabilityForm';
 import ElectionData from './components/Other/ElectionData';
+import FacultyLogin from './pages/Forms/FacultyLogin';
+import FacultyProfile from './pages/Main/FalcultyProfile';
+import FacultySignIn from './pages/Forms/FacultySignForm';
 
 function App() {
   return (
@@ -23,11 +26,14 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Dhasboard />} />
+              <Route path="/faculty/login" element={<FacultyLogin />} />
+              <Route path="/faculty/signin" element={<FacultySignIn />} />
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/login" element={<LoginForm />} />
-              <Route path="/forgot_password" element={<ForgetPassFrom />} />
+              <Route path="/forgot-password" element={<ForgetPassFrom />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path='/falculty/profile' element={<FacultyProfile />} />
                 <Route path="/election" element={<ElectionData />} />
                 <Route path="/complaints" element={<ComplaintsForm />} />
                 <Route path="/leave-application" element={<LeaveApplicationForm />} />

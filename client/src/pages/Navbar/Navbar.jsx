@@ -78,7 +78,7 @@ const Navbar = () => {
                             </li>
                             <li><NavButton path="/login">LOGIN</NavButton></li>
                             <li><NavButton path="/signup">SIGNUP</NavButton></li>
-                            <li><NavButton path="/forgot_password">FORGOT PASSWORD</NavButton></li>
+                            <li><NavButton path="/forgot-password">FORGOT PASSWORD</NavButton></li>
                         </>
                     ) : (
                         <>
@@ -110,7 +110,7 @@ const Navbar = () => {
                                 <li><NavButton path="/">HOME</NavButton></li>
                                 <li><NavButton path="/login">LOGIN</NavButton></li>
                                 <li><NavButton path="/signup">SIGNUP</NavButton></li>
-                                <li><NavButton path="/forgot_password">FORGOT PASSWORD</NavButton></li>
+                                <li><NavButton path="/forgot-password">FORGOT PASSWORD</NavButton></li>
                             </>
                         ) : (
                             <>

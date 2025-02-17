@@ -1,111 +1,157 @@
 import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthService from "../../utils/AuthService";
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [rollno, setRollno] = useState('');
-  const [type, setType] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    rollno: '',
+    type: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   if (AuthService.isAuthenticated()) {
     return <Navigate to="/profile" />;
   }
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const success = await AuthService.login(email, rollno, type, password);
+    try {
+      const success = await AuthService.login(
+        formData.email,
+        formData.rollno,
+        formData.type,
+        formData.password
+      );
 
-    if (success) {
-      toast.success("Login successful! Redirecting...", { autoClose: 2000 });
-      setTimeout(() => navigate('/profile'), 2000);
-    } else {
-      toast.error("Invalid email, roll number, type, or password");
+      if (success) {
+        toast.success("Login successful! Redirecting...", { autoClose: 2000 });
+        setTimeout(() => navigate('/profile'), 2000);
+      }
+    } catch (error) {
+      toast.error("Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-purple-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-2xl transform transition-all duration-300 hover:scale-105">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Welcome Back</h2>
-        <p className="text-center text-gray-500">Please sign in to your account</p>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-semibold text-gray-900">Welcome Back</h2>
+          <p className="mt-2 text-gray-600">Please sign in to your account</p>
+        </div>
+
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700">
               College Email
             </label>
             <input
-              type="text"
-              id="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="email@sggs.ac.in"
             />
           </div>
+
           <div>
-            <label htmlFor="rollno" className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700">
               Roll Number
             </label>
             <input
               type="text"
-              id="rollno"
-              placeholder="Enter your roll number"
-              value={rollno}
-              onChange={(e) => setRollno(e.target.value)}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              name="rollno"
+              value={formData.rollno}
+              onChange={handleChange}
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="2024XXX012"
             />
           </div>
+
           <div>
-            <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700">
               Type
             </label>
             <select
-              id="type"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select your type</option>
+              <option value="">Select Type</option>
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
               <option value="admin">Admin</option>
             </select>
           </div>
+
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <input
               type="password"
-              id="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="••••••••"
             />
           </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label className="ml-2 block text-sm text-gray-900">
+                Remember me
+              </label>
+            </div>
+            <div className="text-sm">
+              <Link to="/forgot-password" className="text-blue-600 hover:text-blue-500">
+                Forgot password?
+              </Link>
+            </div>
+          </div>
+
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all"
+            disabled={loading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
           >
-            Sign In
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
-        <div className="text-center">
+
+        <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{' '}
-            <a href="/signup" className="text-blue-600 hover:underline">
+            <Link to="/signup" className="text-blue-600 hover:text-blue-500">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>
