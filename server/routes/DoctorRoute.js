@@ -118,6 +118,7 @@ router.get('/api/docters/:id', async (req, res) => {
             success: true,
             data: docter
         });
+        // console.log(docter);
     } catch (error) {
         res.status(500).json({
             success: false,
