@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import AuthService from "../../utils/AuthService";
-import logo from "../../assets/logo.jpg"
+import logo from "../../assets/logo.jpg";
 
 const Navbar = () => {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
@@ -13,9 +13,26 @@ const Navbar = () => {
 
     useEffect(() => {
         setActiveRoute(location.pathname);
+        // Close mobile menu when route changes
+        setMenuOpen(false);
     }, [location]);
 
-    const toggleMenu = () => setMenuOpen(!menuOpen);
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuOpen && !event.target.closest('.mobile-menu') && !event.target.closest('.menu-button')) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [menuOpen]);
+
+    const toggleMenu = (e) => {
+        e.stopPropagation();
+        setMenuOpen(!menuOpen);
+    };
 
     const handleNavigation = (path) => {
         setMenuOpen(false);
@@ -31,97 +48,100 @@ const Navbar = () => {
 
     const NavButton = ({ path, children, className = "", isLogout = false }) => {
         const isActive = activeRoute === path;
-        const baseClasses = "font-medium transition-all duration-300 relative";
-        const defaultClasses = `${baseClasses} ${className} ${isActive
+        const baseClasses = "font-medium transition-all duration-300 relative w-full md:w-auto";
+        const defaultClasses = `${baseClasses} ${className} ${
+            isActive
                 ? "text-blue-600"
                 : isLogout
                     ? "text-red-500 hover:text-red-700"
                     : "text-gray-700 hover:text-blue-500"
-            }`;
+        }`;
 
         return (
             <button
                 onClick={() => isLogout ? handleLogout() : handleNavigation(path)}
-                className={`${defaultClasses} group`}
+                className={`${defaultClasses} group px-4 py-2 rounded-lg hover:bg-gray-100/50`}
             >
                 {children}
-                {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-500 to-green-500 transform scale-x-100 transition-transform duration-300" />
-                )}
-                {!isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-500 to-green-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-                )}
+                <span
+                    className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-500 to-green-500 transform transition-all duration-300 
+                    ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}
+                />
             </button>
         );
     };
 
     return (
-        <div className="fixed top-0 z-50 min-w-full bg-gradient-to-r from-cyan-500/10 to-green-500/10 backdrop-blur-sm shadow-lg">
-            <nav className="container mx-auto flex justify-between items-center p-4">
+        <div className="fixed top-0 z-50 w-full bg-gradient-to-r from-cyan-500/10 to-green-500/10 backdrop-blur-sm shadow-lg">
+            <nav className="container mx-auto px-4 lg:px-8">
+                <div className="flex justify-between items-center h-16">
+                    {/* Logo */}
+                    <div className="flex-shrink-0">
+                        <button
+                            onClick={() => handleNavigation("/")}
+                            className="transform transition-transform duration-300 hover:scale-105"
+                        >
+                            <img src={logo} alt="Logo" className="h-10 w-auto" />
+                        </button>
+                    </div>
 
-                <div className="flex items-center">
-                    <button
-                        onClick={() => handleNavigation("/")}
-                        className="transform transition-transform duration-300 hover:scale-110"
-                    >
-                        <img src={logo} alt="Logo" className="h-12" />
-                    </button>
-                </div>
-
-                <ul className="hidden md:flex space-x-6 items-center">
-
-
-                    {!isAuthenticated ? (
-                        <>
-                            <li>
-                                <NavButton path="/">DashBoard</NavButton>
-                            </li>
-                            <li><NavButton path="/login">LOGIN</NavButton></li>
-                            <li><NavButton path="/signup">SIGNUP</NavButton></li>
-                            <li><NavButton path="/forgot-password">FORGOT PASSWORD</NavButton></li>
-                        </>
-                    ) : (
-                        <>
-                            <li><NavButton path="/dashboard">HOME</NavButton></li>
-                            <li><NavButton path="/profile">PROFILE</NavButton></li>
-                            <li><NavButton path="/election">Election</NavButton></li>
-                            <li><NavButton path="/bookings">Booking</NavButton></li>
-                            <li><NavButton path="/logout" isLogout={true}>LOGOUT</NavButton></li>
-                        </>
-                    )}
-                </ul>
-
-                {/* Mobile Menu Button */}
-                <button
-                    className="md:hidden text-gray-700 focus:outline-none transform transition-transform duration-300 hover:scale-110"
-                    onClick={toggleMenu}
-                >
-                    {menuOpen ? "✕" : "☰"}
-                </button>
-
-
-                <div
-                    className={`${menuOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-                        } md:hidden absolute top-16 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-lg p-4 transition-all duration-300`}
-                >
-                    <ul className="space-y-4">
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center space-x-1">
                         {!isAuthenticated ? (
                             <>
-                                <li><NavButton path="/">HOME</NavButton></li>
-                                <li><NavButton path="/login">LOGIN</NavButton></li>
-                                <li><NavButton path="/signup">SIGNUP</NavButton></li>
-                                <li><NavButton path="/forgot-password">FORGOT PASSWORD</NavButton></li>
+                                <NavButton path="/">Dashboard</NavButton>
+                                <NavButton path="/login">Login</NavButton>
+                                <NavButton path="/signup">Signup</NavButton>
+                                <NavButton path="/forgot-password">Forgot Password</NavButton>
                             </>
                         ) : (
                             <>
-                                <li><NavButton path="/dashboard">HOME</NavButton></li>
-                                <li><NavButton path="/profile">PROFILE</NavButton></li>
-                                <li><NavButton path="/election">Election</NavButton></li>
-                                <li><NavButton path="/bookings">Booking</NavButton></li>
-                                <li><NavButton path="/logout" isLogout={true}>LOGOUT</NavButton></li>
+                                <NavButton path="/dashboard">Home</NavButton>
+                                <NavButton path="/profile">Profile</NavButton>
+                                <NavButton path="/election">Election</NavButton>
+                                <NavButton path="/bookings">Booking</NavButton>
+                                <NavButton path="/logout" isLogout={true}>Logout</NavButton>
                             </>
                         )}
-                    </ul>
+                    </div>
+
+                    {/* Mobile Menu Button */}
+                    <button
+                        className="md:hidden menu-button p-2 rounded-lg hover:bg-gray-100/50 focus:outline-none"
+                        onClick={toggleMenu}
+                    >
+                        <div className="w-6 h-6 relative transform transition-all duration-300">
+                            <span className={`absolute h-0.5 w-full bg-gray-600 transform transition-all duration-300 
+                                ${menuOpen ? 'rotate-45 translate-y-2.5' : 'translate-y-1'}`} />
+                            <span className={`absolute h-0.5 w-full bg-gray-600 transform transition-all duration-300 
+                                ${menuOpen ? 'opacity-0' : 'translate-y-3'}`} />
+                            <span className={`absolute h-0.5 w-full bg-gray-600 transform transition-all duration-300 
+                                ${menuOpen ? '-rotate-45 translate-y-2.5' : 'translate-y-5'}`} />
+                        </div>
+                    </button>
+                </div>
+
+                {/* Mobile Menu */}
+                <div className={`mobile-menu md:hidden overflow-hidden transition-all duration-300 ease-in-out
+                    ${menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="py-2 space-y-1 px-2">
+                        {!isAuthenticated ? (
+                            <>
+                                <NavButton path="/">Dashboard</NavButton>
+                                <NavButton path="/login">Login</NavButton>
+                                <NavButton path="/signup">Signup</NavButton>
+                                <NavButton path="/forgot-password">Forgot Password</NavButton>
+                            </>
+                        ) : (
+                            <>
+                                <NavButton path="/dashboard">Home</NavButton>
+                                <NavButton path="/profile">Profile</NavButton>
+                                <NavButton path="/election">Election</NavButton>
+                                <NavButton path="/bookings">Booking</NavButton>
+                                <NavButton path="/logout" isLogout={true}>Logout</NavButton>
+                            </>
+                        )}
+                    </div>
                 </div>
             </nav>
         </div>

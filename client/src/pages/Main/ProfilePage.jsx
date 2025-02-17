@@ -347,6 +347,11 @@ const StudentProfile = () => {
                 >
                   Leave Application
                 </button></Link>
+                <Link to="/condidate-election-form"> <button
+                  className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Election Apllication
+                </button></Link>
 
               </div>
             </Card>

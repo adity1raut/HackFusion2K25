@@ -20,3 +20,5 @@ const ElectionSchema = mongoose.Schema({
     }, {
     timestamps: true,
 });
+
+export default 
