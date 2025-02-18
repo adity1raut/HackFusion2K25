@@ -7,6 +7,7 @@ import useForgetPass from "./routes/ForgetPassRoute.js";
 import useElection from "./routes/ElectionRoute.js"
 import useComplaint from "./routes/CompleteRoute.js"
 import useElectionCandidate from "./routes/Election/ElectionRegistatonRoute.js"
+import useBooking  from "./routes/BookingRoute.js"
 import env from 'dotenv';
 import cors from "cors";
 
@@ -29,7 +30,8 @@ app.use(useForgetPass);
 app.use(useComplaint);
 app.use(useElection);
 app.use(useElectionCandidate)
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(useBooking)
+
 
 const PORT = 4000 ;
 app.listen(PORT, () => {

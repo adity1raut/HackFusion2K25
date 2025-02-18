@@ -1,0 +1,267 @@
+[
+  {
+    "basicInfo": {
+      "venue": "Auditorium",
+      "name": "Auditorium",
+      "capacity": "400 Seats",
+      "location": "Admin Building",
+      "image": "https://res.cloudinary.com/dg6qtpags/image/upload/v1739874682/your-cloudinary-folder-name/yeq93de3i3jk5yniybz8.jpg",
+      "prize": "20,000"
+    },
+    "details": {
+      "description": "A 400-seat auditorium used for local theater performances and events, featuring a raised stage, professional-grade sound systems, and a backstage area for performers.",
+      "features": [
+        "Professional-grade sound systems",
+        "Raised stage",
+        "Backstage area",
+        "Theater lighting"
+      ],
+      "useCases": [
+        "Theater performances",
+        "Conferences",
+        "Ceremonies",
+        "Presentations"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 1,
+        "name": "Community Theater Auditorium",
+        "description": "Main auditorium space with professional setup"
+      },
+      {
+        "id": 2,
+        "name": "Sound System",
+        "description": "Professional grade audio equipment"
+      },
+      {
+        "id": 3,
+        "name": "Lighting System",
+        "description": "Theater-quality lighting setup"
+      },
+      {
+        "id": 4,
+        "name": "Backstage Area",
+        "description": "Dedicated space for performers and equipment"
+      }
+    ],
+    "availability": {
+      "schedule": {
+        "openDays": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "openingTime": "09:00",
+        "closingTime": "22:00"
+      },
+      "restrictions": [
+        "Prior booking required",
+        "Minimum 2 hours booking",
+        "Maximum capacity must be observed"
+      ],
+      "maintenanceDays": [
+        "Sunday"
+      ]
+    },
+    "quickInfo": {
+      "capacity": "400 Seats",
+      "price": {
+        "amount": "20,000",
+        "currency": "₹",
+        "unit": "per day"
+      },
+      "location": {
+        "building": "Admin Building",
+        "floor": "Ground Floor",
+        "landmark": "Near Main Gate"
+      }
+    },
+    "contact": {
+      "supportEmail": "support@venue.com",
+      "bookingPhone": "+91-XXX-XXX-XXXX",
+      "emergencyContact": "+91-XXX-XXX-XXXX",
+      "helpDeskHours": "9 AM to 6 PM"
+    }
+  },
+  {
+    "basicInfo": {
+      "venue": "Ground",
+      "name": "Ground",
+      "capacity": "400 Seats",
+      "location": "Admin Building",
+      "image": "https://res.cloudinary.com/dg6qtpags/image/upload/v1739874685/your-cloudinary-folder-name/giq98eafvxn4pz6j5acc.webp",
+      "prize": "20,000"
+    },
+    "details": {
+      "description": "A 400-seat auditorium used for local theater performances and events, featuring a raised stage, professional-grade sound systems, and a backstage area for performers.",
+      "features": [
+        "Professional-grade sound systems",
+        "Raised stage",
+        "Backstage area",
+        "Theater lighting"
+      ],
+      "useCases": [
+        "Theater performances",
+        "Conferences",
+        "Ceremonies",
+        "Presentations"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 1,
+        "name": "Community Theater Auditorium",
+        "description": "Main auditorium space with professional setup"
+      },
+      {
+        "id": 2,
+        "name": "Sound System",
+        "description": "Professional grade audio equipment"
+      },
+      {
+        "id": 3,
+        "name": "Lighting System",
+        "description": "Theater-quality lighting setup"
+      },
+      {
+        "id": 4,
+        "name": "Backstage Area",
+        "description": "Dedicated space for performers and equipment"
+      }
+    ],
+    "availability": {
+      "schedule": {
+        "openDays": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "openingTime": "09:00",
+        "closingTime": "22:00"
+      },
+      "restrictions": [
+        "Prior booking required",
+        "Minimum 2 hours booking",
+        "Maximum capacity must be observed"
+      ],
+      "maintenanceDays": [
+        "Sunday"
+      ]
+    },
+    "quickInfo": {
+      "capacity": "400 Seats",
+      "price": {
+        "amount": "20,000",
+        "currency": "₹",
+        "unit": "per day"
+      },
+      "location": {
+        "building": "Admin Building",
+        "floor": "Ground Floor",
+        "landmark": "Near Main Gate"
+      }
+    },
+    "contact": {
+      "supportEmail": "support@venue.com",
+      "bookingPhone": "+91-XXX-XXX-XXXX",
+      "emergencyContact": "+91-XXX-XXX-XXXX",
+      "helpDeskHours": "9 AM to 6 PM"
+    }
+  },
+  {
+    
+    "basicInfo": {
+      "venue": "Classrooms",
+      "name": "Classrooms",
+      "capacity": "400 Seats",
+      "location": "Admin Building",
+      "image": "https://res.cloudinary.com/dg6qtpags/image/upload/v1739874684/your-cloudinary-folder-name/o6l8nuliwj7w13xtphiz.jpg",
+      "prize": "20,000"
+    },
+    "details": {
+      "description": "A 400-seat auditorium used for local theater performances and events, featuring a raised stage, professional-grade sound systems, and a backstage area for performers.",
+      "features": [
+        "Professional-grade sound systems",
+        "Raised stage",
+        "Backstage area",
+        "Theater lighting"
+      ],
+      "useCases": [
+        "Theater performances",
+        "Conferences",
+        "Ceremonies",
+        "Presentations"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 1,
+        "name": "Community Theater Auditorium",
+        "description": "Main auditorium space with professional setup"
+      },
+      {
+        "id": 2,
+        "name": "Sound System",
+        "description": "Professional grade audio equipment"
+      },
+      {
+        "id": 3,
+        "name": "Lighting System",
+        "description": "Theater-quality lighting setup"
+      },
+      {
+        "id": 4,
+        "name": "Backstage Area",
+        "description": "Dedicated space for performers and equipment"
+      }
+    ],
+    "availability": {
+      "schedule": {
+        "openDays": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "openingTime": "09:00",
+        "closingTime": "22:00"
+      },
+      "restrictions": [
+        "Prior booking required",
+        "Minimum 2 hours booking",
+        "Maximum capacity must be observed"
+      ],
+      "maintenanceDays": [
+        "Sunday"
+      ]
+    },
+    "quickInfo": {
+      "capacity": "400 Seats",
+      "price": {
+        "amount": "20,000",
+        "currency": "₹",
+        "unit": "per day"
+      },
+      "location": {
+        "building": "Admin Building",
+        "floor": "Ground Floor",
+        "landmark": "Near Main Gate"
+      }
+    },
+    "contact": {
+      "supportEmail": "support@venue.com",
+      "bookingPhone": "+91-XXX-XXX-XXXX",
+      "emergencyContact": "+91-XXX-XXX-XXXX",
+      "helpDeskHours": "9 AM to 6 PM"
+    }
+  }
+]

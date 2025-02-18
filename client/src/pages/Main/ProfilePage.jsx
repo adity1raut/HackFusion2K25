@@ -70,112 +70,123 @@ const EditProfileModal = ({ isOpen, onClose, studentInfo, onUpdate }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
-            {error}
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+                    <div className="fixed inset-0 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
+              <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
+              
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                  {error}
+                </div>
+              )}
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Profile Picture
+                  </label>
+                  <input
+                    type="file"
+                    name="profile"
+                    onChange={handleChange}
+                    accept="image/*"
+                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Academic Year
+                  </label>
+                  <input
+                    type="text"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Branch
+                  </label>
+                  <input
+                    type="text"
+                    name="branch"
+                    value={formData.branch}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Roll No
+                  </label>
+                  <input
+                    type="text"
+                    name="rollno"
+                    value={formData.rollno}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors duration-200"
+                    disabled={loading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 transition-colors duration-200"
+                    disabled={loading}
+                  >
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Profile Picture
-            </label>
-            <input
-              type="file"
-              name="profile"
-              onChange={handleChange}
-              accept="image/*"
-              className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Acadamic Year
-            </label>
-            <input
-              type="text"
-              name="year"
-              value={formData.year}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Branch
-            </label>
-            <input
-              type="text"
-              name="branch"
-              value={formData.branch}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Roll No
-            </label>
-            <input
-              type="text"
-              name="rollno"
-              value={formData.rollno}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-          <div className="flex justify-end space-x-3 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
   );
 };
 
@@ -287,85 +298,105 @@ const StudentProfile = () => {
         <h1 className="text-3xl md:text-4xl text-purple-600 text-center font-bold mb-2">
           Student Profile
         </h1>
-        <br />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-          <Card>
-            <div className="flex flex-col items-center p-4">
+        
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          {/* Profile Card */}
+          <Card className="bg-white shadow-lg rounded-xl overflow-hidden">
+            <div className="flex flex-col items-center p-6">
               <div className="relative group">
                 <img
                   src={studentInfo.profile}
                   alt="profile"
-                  className="w-24 h-24 md:w-32 md:h-32 rounded-full mb-4 object-cover"
+                  className="w-24 h-24 md:w-32 md:h-32 rounded-full mb-4 object-cover ring-4 ring-purple-100 transition-all duration-300 hover:ring-purple-300"
                 />
               </div>
-              <h2 className="text-xl font-bold mb-4">{studentInfo.name || 'N/A'}</h2>
-              <div className="space-y-2 w-full">
-                <p>Roll Number: {studentInfo.rollno || 'N/A'}</p>
-                <p>Email: {studentInfo.email || 'N/A'}</p>
-                <p>Branch: {studentInfo.branch || 'N/A'}</p>
+              
+              <h2 className="text-xl font-bold mb-4 text-gray-800">
+                {studentInfo.name || 'N/A'}
+              </h2>
+              
+              <div className="space-y-3 w-full text-gray-600">
+                <p className="flex justify-between">
+                  <span className="font-medium">Roll Number:</span>
+                  <span>{studentInfo.rollno || 'N/A'}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-medium">Email:</span>
+                  <span className="text-sm">{studentInfo.email || 'N/A'}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-medium">Branch:</span>
+                  <span>{studentInfo.branch || 'N/A'}</span>
+                </p>
               </div>
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Edit Profile
-              </button>
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Logout
-              </button>
+              
+              <div className="mt-6 w-full space-y-3">
+                <button
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+                >
+                  Edit Profile
+                </button>
+                <button
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </Card>
 
+          {/* Information Cards */}
           <div className="col-span-1 md:col-span-2 space-y-4 md:space-y-6">
-            <Card>
-              <h3 className="text-xl font-bold mb-4">General Information</h3>
+            <Card className="bg-white shadow-lg rounded-xl p-6">
+              <h3 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">
+                General Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(studentInfo.generalInfo).map(([key, value]) => (
-                  <div key={key} className="border-b py-2">
-                    <div className="flex justify-between">
-                      <span className="capitalize">{key}</span>
-                      <span>: {value}</span>
+                  <div key={key} className="border-b border-gray-100 py-2">
+                    <div className="flex justify-between items-center">
+                      <span className="capitalize font-medium text-gray-600">{key}</span>
+                      <span className="text-gray-800">: {value}</span>
                     </div>
                   </div>
                 ))}
               </div>
             </Card>
-            <Card>
+
+            <Card className="bg-white shadow-lg rounded-xl p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                <Link to="/complaints"> <button
-                  className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Complaints
-                </button></Link>
-
-                <Link to="/leave-application"> <button
-                  className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Leave Application
-                </button></Link>
-                <Link to="/condidate-election-form"> <button
-                  className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Election Apllication
-                </button></Link>
-
+                <Link to="/complaints" className="w-full">
+                  <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                    Complaints
+                  </button>
+                </Link>
+                
+                <Link to="/leave-application" className="w-full">
+                  <button className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                    Leave Application
+                  </button>
+                </Link>
+                
+                <Link to="/condidate-election-form" className="w-full md:col-span-2">
+                  <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                    Election Application
+                  </button>
+                </Link>
               </div>
             </Card>
           </div>
-
-
         </div>
 
-        <EditProfileModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          studentInfo={studentInfo}
-          onUpdate={handleUpdateProfile}
-        />
+        {isEditModalOpen && (
+          <EditProfileModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            studentInfo={studentInfo}
+            onUpdate={handleUpdateProfile}
+          />
+        )}
       </div>
     </div>
   );

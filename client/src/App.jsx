@@ -18,6 +18,9 @@ import FacultyProfile from './pages/Main/FalcultyProfile';
 import FacultySignIn from './pages/Forms/FacultySignForm';
 import GroundBooking from './components/Forms/GroundBooking';
 import CandidateElectionForm from './components/Forms/ElectionRegistation';
+import VenueDetails from './components/Details/VenueDetails';
+import Demo from './components/Details/Demo';
+
 
 function App() {
   return (
@@ -43,6 +46,9 @@ function App() {
                 <Route path="/bookings" element={<GroundBooking />} />
                 <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
                 <Route path="/condidate-election-form" element={<CandidateElectionForm />} />
+                <Route path="/bookings/details/:name" element={<VenueDetails/>}/>
+                {/* <Route path='/election-details' element={<VotingDetails/>} /> */}
+                <Route path='/demo' element={<Demo/>}/>
               </Route>
             </Routes>
           </div>
