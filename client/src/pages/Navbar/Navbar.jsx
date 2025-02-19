@@ -91,7 +91,7 @@ const Navbar = () => {
                             <>
                                 <NavButton path="/">Dashboard</NavButton>
                                 <NavButton path="/login">Login</NavButton>
-                                <NavButton path="/signup">Signup</NavButton>
+                                <NavButton path="/signin">Signup</NavButton>
                                 <NavButton path="/forgot-password">Forgot Password</NavButton>
                             </>
                         ) : (
@@ -129,7 +129,7 @@ const Navbar = () => {
                             <>
                                 <NavButton path="/">Dashboard</NavButton>
                                 <NavButton path="/login">Login</NavButton>
-                                <NavButton path="/signup">Signup</NavButton>
+                                <NavButton path="/signin">Signup</NavButton>
                                 <NavButton path="/forgot-password">Forgot Password</NavButton>
                             </>
                         ) : (

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from './User.models.js';
+
 
 const leaveApplicationSchema = new mongoose.Schema({
     student_information: {

@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-const SignUpForm = () => {
+const StudentSignUp = () => {
   const [formData, setFormData] = useState({
     name: "",
     rollno: "",
@@ -25,11 +25,11 @@ const SignUpForm = () => {
   };
 
   const validateFields = () => {
-    const { name, rollno, email, type, password, confirmPassword } = formData;
+    const { name, rollno, email, password, confirmPassword } = formData;
     const emailPattern = /@sggs\.ac\.in$/;
     const rollnoPattern = /^\d{4}[a-zA-Z]{3}\d{3}$/;
 
-    if (!name || !rollno || !email || !type) {
+    if (!name || !rollno || !email ) {
       toast.error("All fields are required.");
       return false;
     }
@@ -68,7 +68,6 @@ const SignUpForm = () => {
           email: formData.email,
           name: formData.name,
           rollno: formData.rollno,
-          type: formData.type
         });
         if (response.status === 200) {
           setOtpSent(true);
@@ -146,22 +145,6 @@ const SignUpForm = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Type
-            </label>
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">Select Type</option>
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-            </select>
-          </div>
 
           {otpSent && (
             <>
@@ -235,4 +218,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default StudentSignUp;

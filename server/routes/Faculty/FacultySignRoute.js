@@ -23,6 +23,7 @@ setInterval(() => {
     }
 }, 5 * 60 * 1000);
 
+// Generate OTP
 const generateOTP = () => {
     const otp = crypto.randomInt(100000, 999999).toString();
     return {
@@ -31,35 +32,40 @@ const generateOTP = () => {
     };
 };
 
+// Validate faculty input
 const validateFacultyInput = (data) => {
     const errors = {};
     
-    if (!data.name || data.name.length < 2) {
-        errors.name = 'Valid name is required';
+    // Name validation
+    if (!data.name || data.name.trim().length < 2) {
+        errors.name = 'Name must be at least 2 characters long';
     }
     
-    if (!data.email || !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(data.email)) {
-        errors.email = 'Valid email is required';
+    // Email validation for SGGS domain
+    if (!data.email || !data.email.endsWith('@sggs.ac.in')) {
+        errors.email = 'Please use a valid SGGS email address (@sggs.ac.in)';
     }
     
-    if (!data.department) {
-        errors.department = 'Department is required';
+    // Type validation
+    const validTypes = ['faculty', 'secretary', 'club'];
+    if (!data.type || !validTypes.includes(data.type)) {
+        errors.type = 'Invalid account type';
     }
-    
-    if (!data.designation) {
-        errors.designation = 'Designation is required';
-    }
-    
+
     return {
         isValid: Object.keys(errors).length === 0,
         errors
     };
 };
 
-// Initial signup endpoint - Only sends OTP
+// Send OTP Endpoint
 router.post('/api/faculty/send-otp', async (req, res) => {
     try {
-        const { name, email, department, designation, specialization, experience, type } = req.body;
+        const { 
+            name, 
+            email, 
+            type = 'faculty'
+        } = req.body;
 
         // Validate input
         const validation = validateFacultyInput(req.body);
@@ -85,12 +91,8 @@ router.post('/api/faculty/send-otp', async (req, res) => {
 
         // Store faculty data temporarily
         tempFacultyStore.set(email, {
-            name,
-            email,
-            department,
-            designation,
-            specialization,
-            experience: Number(experience),
+            name: name.trim(),
+            email: email.toLowerCase(),
             type
         });
 
@@ -100,15 +102,21 @@ router.post('/api/faculty/send-otp', async (req, res) => {
             to: email,
             subject: 'Your OTP for Faculty Registration',
             html: `
-                <h2>Welcome to Our Faculty Portal</h2>
-                <p>Your OTP for registration is: <strong>${otpData.code}</strong></p>
-                <p>This OTP will expire in 10 minutes.</p>
-                <p>If you didn't request this registration, please ignore this email.</p>
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Welcome to Faculty Registration Portal</h2>
+                    <p>Your One-Time Password (OTP) for registration is:</p>
+                    <h3 style="background-color: #f0f0f0; padding: 10px; text-align: center; letter-spacing: 5px;">
+                        ${otpData.code}
+                    </h3>
+                    <p>This OTP is valid for 10 minutes. Do not share it with anyone.</p>
+                    <p>If you did not request this registration, please ignore this email.</p>
+                </div>
             `
         };
-        console.log(otpData.code);
 
+        // Send email and log OTP (remove in production)
         await transporter.sendMail(mailOptions);
+        console.log(`OTP for ${email}: ${otpData.code}`);
 
         res.status(200).json({
             success: true,
@@ -123,10 +131,23 @@ router.post('/api/faculty/send-otp', async (req, res) => {
     }
 });
 
-// Verify OTP and create faculty with password
+// Verify OTP and Complete Registration
 router.post('/api/faculty/verify-and-register', async (req, res) => {
     try {
-        const { email, otp, password } = req.body;
+        const { 
+            email, 
+            otp, 
+            password, 
+            confirmPassword
+        } = req.body;
+
+        // Validate email
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required'
+            });
+        }
 
         // Check if OTP exists
         const otpData = otpStore.get(email);
@@ -156,10 +177,18 @@ router.post('/api/faculty/verify-and-register', async (req, res) => {
         }
 
         // Validate password
-        if (!password || password.length < 6) {
+        if (!password || password.length < 8) {
             return res.status(400).json({
                 success: false,
-                message: 'Password must be at least 6 characters long'
+                message: 'Password must be at least 8 characters long'
+            });
+        }
+
+        // Confirm password
+        if (password !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Passwords do not match'
             });
         }
 
@@ -202,10 +231,18 @@ router.post('/api/faculty/verify-and-register', async (req, res) => {
     }
 });
 
-// Resend OTP endpoint
+// Resend OTP Endpoint
 router.post('/api/faculty/resend-otp', async (req, res) => {
     try {
         const { email } = req.body;
+
+        // Validate email
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required'
+            });
+        }
 
         // Check if temporary faculty data exists
         const facultyData = tempFacultyStore.get(email);
@@ -226,14 +263,20 @@ router.post('/api/faculty/resend-otp', async (req, res) => {
             to: email,
             subject: 'Your New OTP for Faculty Registration',
             html: `
-                <h2>New OTP for Faculty Portal</h2>
-                <p>Your new OTP for registration is: <strong>${otpData.code}</strong></p>
-                <p>This OTP will expire in 10 minutes.</p>
-                <p>If you didn't request this OTP, please ignore this email.</p>
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>New OTP for Faculty Registration</h2>
+                    <p>Your new One-Time Password (OTP) is:</p>
+                    <h3 style="background-color: #f0f0f0; padding: 10px; text-align: center; letter-spacing: 5px;">
+                        ${otpData.code}
+                    </h3>
+                    <p>This OTP is valid for 10 minutes. Do not share it with anyone.</p>
+                    <p>If you did not request this OTP, please ignore this email.</p>
+                </div>
             `
         };
 
         await transporter.sendMail(mailOptions);
+        console.log(`New OTP for ${email}: ${otpData.code}`);
 
         res.status(200).json({
             success: true,
@@ -244,55 +287,6 @@ router.post('/api/faculty/resend-otp', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error sending new OTP. Please try again.'
-        });
-    }
-});
-
-// Login endpoint
-router.post('/api/faculty/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        // Find faculty and include password field
-        const faculty = await Faculty.findOne({ email }).select('+password');
-        if (!faculty) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
-
-        // Check if faculty is verified
-        if (!faculty.isVerified) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please verify your email before logging in'
-            });
-        }
-
-        // Compare password
-        const isMatch = await bcrypt.compare(password, faculty.password);
-        if (!isMatch) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
-
-        // Generate token (assuming you have a JWT implementation)
-        const token = faculty.generateAuthToken(); // Implement this method in your Faculty model
-
-        res.status(200).json({
-            success: true,
-            token,
-            email: faculty.email,
-            name: faculty.name
-        });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error during login. Please try again.'
         });
     }
 });

@@ -1,8 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from "../src/context/AuthContext";
-import SignUpForm from './pages/Forms/SignUpForm'
-import LoginForm from './pages/Forms/LoginForm'
 import PrivateRoute from '../src/utils/PrivateRoute'
 import ProfilePage from './pages/Main/ProfilePage'
 import Navbar from './pages/Navbar/Navbar'
@@ -13,13 +11,17 @@ import LeaveApplicationForm from './components/Forms/LeaveApplicationForm';
 import DoctorAppointmentForm from './components/Other/DoctorAppointmentForm';
 import FacultyAvailabilityForm from './components/Other/FacultyAvailabilityForm';
 import ElectionData from './components/Other/ElectionData';
-import FacultyLogin from './pages/Forms/FacultyLogin';
 import FacultyProfile from './pages/Main/FalcultyProfile';
-import FacultySignIn from './pages/Forms/FacultySignForm';
+import StudentSignUp from "./pages/Forms/StudentSignUp"
 import GroundBooking from './components/Forms/GroundBooking';
 import CandidateElectionForm from './components/Forms/ElectionRegistation';
 import VenueDetails from './components/Details/VenueDetails';
-import Demo from './components/Details/Demo';
+import FacultySignup from "./pages/Forms/FacultySignForm"
+import LoginPage from './pages/Main/LoginPage';
+import SignUpPage from './pages/Main/SignUpPage';
+import AdmiLogin from './pages/Forms/AdmiLogin';
+import LoginForm from './pages/Forms/StudentLogin';
+import FacultyLogin from './pages/Forms/FacultyLogin';
 
 
 function App() {
@@ -31,10 +33,13 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Dhasboard />} />
-              <Route path="/faculty/login" element={<FacultyLogin />} />
-              <Route path="/faculty/signin" element={<FacultySignIn />} />
-              <Route path="/signup" element={<SignUpForm />} />
-              <Route path="/login" element={<LoginForm />} />
+              <Route path="/signin" element={<SignUpPage />} />
+              <Route path="/signin/student" element={<StudentSignUp />} />
+              <Route path="/signin/faculty" element={<FacultySignup />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login/faculty" element={<FacultyLogin />} />
+              <Route path="/login/student" element={<LoginForm />} />
+              <Route path="/login/admin" element={<AdmiLogin />} />
               <Route path="/forgot-password" element={<ForgetPassFrom />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/profile" element={<ProfilePage />} />
@@ -47,8 +52,6 @@ function App() {
                 <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
                 <Route path="/condidate-election-form" element={<CandidateElectionForm />} />
                 <Route path="/bookings/details/:name" element={<VenueDetails/>}/>
-                {/* <Route path='/election-details' element={<VotingDetails/>} /> */}
-                <Route path='/demo' element={<Demo/>}/>
               </Route>
             </Routes>
           </div>

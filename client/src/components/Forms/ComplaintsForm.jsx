@@ -158,11 +158,11 @@ const ComplaintsForm = () => {
                         </form>
                     </div>
 
-                    {/* Complaints List */}
+
                     <div className="w-full lg:w-[640px]">
                         <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-xl p-6">
                             <h2 className="text-xl font-bold text-gray-800 mb-6">Previous Complaints</h2>
-                            <ComplainTable complaints={complaints} />
+                            <ComplainTable />
                         </div>
                     </div>
                 </div>

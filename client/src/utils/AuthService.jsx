@@ -1,37 +1,63 @@
+// utils/AuthService.js
+import axios from 'axios';
+
+axios.defaults.baseURL = 'http://localhost:4000';
+
 const AuthService = {
-  login: async (email, rollno, type, password) => {
-    try {
-      const response = await fetch("http://localhost:4000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, rollno, type, password }),
-      });
+    login: async (email, rollno, password) => {
+        try {
+            const response = await axios.post('/api/login', {
+                email,
+                rollNumber: rollno,
+                password
+            });
 
-      const data = await response.json();
+            if (response.data.success) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('email', response.data.email);
+                localStorage.setItem('rollNumber', response.data.rollno);
+                
+                // Dispatch auth change event
+                window.dispatchEvent(new Event("authChange"));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Login error:', error.response?.data || error);
+            throw error;
+        }
+    },
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("email", data.email);
-        localStorage.setItem("rollno", data.rollno);
-        window.dispatchEvent(new Event("authChange")); 
-        return true;
-      } else {
-        throw new Error(data.message || "Login failed");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
+    isAuthenticated: () => {
+        const token = localStorage.getItem('token');
+        if (!token) return false;
+
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.exp < Date.now() / 1000) {
+                AuthService.logout();
+                return false;
+            }
+            return true;
+        } catch {
+            return false;
+        }
+    },
+
+    logout: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        localStorage.removeItem('rollNumber');
+        // Dispatch auth change event
+        window.dispatchEvent(new Event("authChange"));
+    },
+
+    getUserDetails: () => {
+        return {
+            email: localStorage.getItem('email'),
+            rollNumber: localStorage.getItem('rollNumber')
+        };
     }
-  },
-
-  logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    localStorage.removeItem("rollno");
-    window.dispatchEvent(new Event("authChange")); 
-  },
-
-  isAuthenticated: () => !!localStorage.getItem("token"),
 };
 
 export default AuthService;

@@ -1,5 +1,6 @@
+// complaints.routes.js
 import express from 'express';
-import Complents from '../models/Complents.model.js'; // Ensure the correct file extension
+import Complents from '../models/Complents.model.js';
 
 const router = express.Router();
 
@@ -7,24 +8,23 @@ const router = express.Router();
 router.post('/api/complaints', async (req, res) => {
     try {
         const { name, email, subject, message } = req.body;
-
+        
         if (!name || !email || !subject || !message) {
-            return res.status(400).json({ message: 'All fields are required: name, email, subject, message' });
+            return res.status(400).json({ 
+                message: 'All fields are required: name, email, subject, message' 
+            });
         }
-
-        // Create a new complaint
+        
         const newComplaint = new Complents({
             name,
             email,
             subject,
             message,
-            status: 'unread' // Default status
+            status: 'unread'
         });
-
-        // Save the complaint to the database
+        
         await newComplaint.save();
-
-        // Respond with the created complaint
+        
         res.status(201).json({
             message: 'Complaint submitted successfully',
             data: newComplaint
@@ -38,19 +38,45 @@ router.post('/api/complaints', async (req, res) => {
 // GET route to retrieve all complaints
 router.get('/api/complaints', async (req, res) => {
     try {
-        // Retrieve all complaints from the database
-        const complaints = await Complents.find();
-
-        // Convert the complaints to a map with id as the key
-        const complaintsMap = new Map(complaints.map(complaint => [complaint._id, complaint]));
-
-        // Respond with the complaints data
+        const complaints = await Complents.find().sort({ createdAt: -1 });
         res.status(200).json({
             message: 'Complaints retrieved successfully',
-            data: Array.from(complaintsMap.values())
+            data: complaints
         });
     } catch (error) {
         console.error('Error retrieving complaints:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// PATCH route to update complaint status
+router.patch('/api/complaints/:id/status', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!['approved', 'rejected'].includes(status)) {
+            return res.status(400).json({ 
+                message: 'Invalid status. Must be either "approved" or "rejected"' 
+            });
+        }
+
+        const updatedComplaint = await Complents.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+        );
+
+        if (!updatedComplaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
+        }
+
+        res.status(200).json({
+            message: 'Complaint status updated successfully',
+            data: updatedComplaint
+        });
+    } catch (error) {
+        console.error('Error updating complaint status:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

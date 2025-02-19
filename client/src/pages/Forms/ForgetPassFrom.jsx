@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Mail, Lock, Key, RotateCw, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 const ForgetPassFrom = () => {
   const [formData, setFormData] = useState({
@@ -112,115 +113,159 @@ const ForgetPassFrom = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-purple-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-2xl transform transition-all duration-300 hover:scale-105">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Forgot Password</h2>
-        <p className="text-center text-gray-500">
-          {step === 1
-            ? "Enter your email to receive an OTP."
-            : step === 2
-            ? "Enter the OTP sent to your email."
-            : "Enter your new password."}
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {step === 1 && (
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                required
-              />
+    <div className="min-h-screen bg-gradient-to-b flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-6 transform transition-all duration-300">
+          {/* Header Icon */}
+          <div className="text-center">
+            <div className="inline-flex p-3 bg-[#2f2f7b]/10 rounded-full mb-4">
+              <Key className="w-8 h-8 text-[#2f2f7b]" />
             </div>
-          )}
-
-          {step === 2 && (
-            <div>
-              <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-                OTP
-              </label>
-              <input
-                type="text"
-                id="otp"
-                name="otp"
-                placeholder="Enter OTP"
-                value={formData.otp}
-                onChange={handleChange}
-                maxLength="4"
-                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="w-full mt-2 text-blue-600 hover:underline"
-                disabled={loading}
-              >
-                Resend OTP
-              </button>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Reset Password</h2>
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className={`w-3 h-3 rounded-full ${step >= 1 ? 'bg-[#2f2f7b]' : 'bg-gray-300'}`}></div>
+              <div className={`w-3 h-3 rounded-full ${step >= 2 ? 'bg-[#2f2f7b]' : 'bg-gray-300'}`}></div>
+              <div className={`w-3 h-3 rounded-full ${step >= 3 ? 'bg-[#2f2f7b]' : 'bg-gray-300'}`}></div>
             </div>
-          )}
+            <p className="text-gray-600">
+              {step === 1
+                ? "Enter your email to receive an OTP"
+                : step === 2
+                ? "Enter the OTP sent to your email"
+                : "Create your new password"}
+            </p>
+          </div>
 
-          {step === 3 && (
-            <>
-              <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  placeholder="Enter new password"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  required
-                />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {step === 1 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address
+                  </label>
+                  <div className="relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f2f7b] focus:border-[#2f2f7b] transition-colors"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
+            )}
 
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  placeholder="Confirm new password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  required
-                />
+            {step === 2 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Enter OTP
+                  </label>
+                  <div className="relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <CheckCircle2 className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      name="otp"
+                      value={formData.otp}
+                      onChange={handleChange}
+                      maxLength="4"
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f2f7b] focus:border-[#2f2f7b] transition-colors"
+                      placeholder="Enter 4-digit OTP"
+                      required
+                    />
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="flex items-center justify-center w-full gap-2 text-[#2f2f7b] hover:text-blue-700 transition-colors"
+                  disabled={loading}
+                >
+                  <RotateCw className="w-4 h-4" />
+                  Resend OTP
+                </button>
               </div>
-            </>
-          )}
+            )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all"
-          >
-            {loading ? "Processing..." : step === 1 ? "Send OTP" : step === 2 ? "Verify OTP" : "Reset Password"}
-          </button>
-        </form>
+            {step === 3 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Password
+                  </label>
+                  <div className="relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      value={formData.newPassword}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f2f7b] focus:border-[#2f2f7b] transition-colors"
+                      placeholder="Enter new password"
+                      required
+                    />
+                  </div>
+                </div>
 
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            Remember your password?{" "}
-            <a href="/login" className="text-blue-600 hover:underline">
-              Sign in
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm Password
+                  </label>
+                  <div className="relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f2f7b] focus:border-[#2f2f7b] transition-colors"
+                      placeholder="Confirm new password"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-white bg-[#2f2f7b] rounded-lg hover:bg-[#3f3f8b] focus:ring-2 focus:ring-offset-2 focus:ring-[#2f2f7b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <RotateCw className="w-5 h-5 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  {step === 1 ? "Send OTP" : step === 2 ? "Verify OTP" : "Reset Password"}
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="text-center">
+            <a 
+              href="/login" 
+              className="inline-flex items-center text-sm text-[#2f2f7b] hover:text-blue-700 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back to Login
             </a>
-          </p>
+          </div>
         </div>
       </div>
 

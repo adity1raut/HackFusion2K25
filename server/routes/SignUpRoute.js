@@ -14,9 +14,9 @@ const rollnoPattern = /^\d{4}[a-zA-Z]{3}\d{3}$/;
 
 router.post('/api/send-otp', async (req, res) => {
   try {
-    const { email, name, rollno, type } = req.body;
+    const { email, name, rollno } = req.body;
 
-    if (!email || !name || !rollno || !type) {
+    if (!email || !name || !rollno) {
       return res.status(400).send({ message: "Email, name, roll number, and type are required" });
     }
 
@@ -76,9 +76,9 @@ router.post('/api/verify-otp', (req, res) => {
 
 router.post('/api/users', async (req, res) => {
   try {
-    const { email, password, rollno, name, type } = req.body;
+    const { email, password, rollno, name } = req.body;
 
-    if (!email || !password || !rollno || !name || !type) {
+    if (!email || !password || !rollno || !name) {
       return res.status(400).send({ message: "Email, password, name, roll number, and type are required" });
     }
 
@@ -103,7 +103,7 @@ router.post('/api/users', async (req, res) => {
       name: name,
       rollno: rollno,
       email: email,
-      type: type,
+      type: "Student",
       username: username,
       password: hashedPassword,
     });

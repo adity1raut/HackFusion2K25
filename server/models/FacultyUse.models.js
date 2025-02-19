@@ -1,90 +1,52 @@
-import express from 'express';
-import Faculty from "../../models/FacultyUse.models.js";
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import { type } from 'os';
 
-dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET;
-const router = express.Router();
+const facultySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address']
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false
+  },
+  specialization:{
+    type:String 
+  },
+  department: {
+    type: String,
+  },
+  designation: {
+    type: String,
+  },
+  type: {
+    type: String,
+    enum: ['faculty', 'secretary', 'club'],
+    default: 'faculty'
+  },
+  position: {
+    type: String
+  },
+  profileImage: {
+    type: String
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  }
+}, {
+  timestamps: true
+});
 
-// Faculty Login
-const login = async (req, res) => {
-    const { email, password, type } = req.body;
+const Faculty = mongoose.model('Faculty', facultySchema);
 
-    try {
-        // Validate input
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email and password are required'
-            });
-        }
-
-        // Find faculty by email
-        const faculty = await Faculty.findOne({ email });
-        
-        if (!faculty) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid email or password'
-            });
-        }
-
-        if (faculty.type !== type) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid user type'
-            });
-        }
-
-        // Check if faculty is verified
-        if (!faculty.isVerified) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please verify your email before logging in'
-            });
-        }
-
-        // Compare password using bcrypt
-        const isMatch = await bcrypt.compare(password, faculty.password);
-        if (!isMatch) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid email or password'
-            });
-        }
-
-        // Generate JWT token
-        const token = jwt.sign(
-            {
-                userId: faculty._id,
-                email: faculty.email,
-                type: faculty.type
-            },
-            JWT_SECRET,
-            { expiresIn: '1h' }
-        );
-
-        // Send response without password
-        const facultyWithoutPassword = faculty.toObject();
-        delete facultyWithoutPassword.password;
-
-        res.status(200).json({
-            success: true,
-            token,
-            faculty: facultyWithoutPassword,
-            message: 'Login successful'
-        });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Server error'
-        });
-    }
-};
-
-router.post('/api/faculty/login', login);
-
-export default router;
+export default Faculty;

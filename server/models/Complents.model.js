@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 
+import mongoose from 'mongoose';
 
 const ComplentsSchema = mongoose.Schema({
     name: {
@@ -20,12 +20,11 @@ const ComplentsSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        default: 'pending'
+        enum: ['unread', 'approved', 'rejected'],
+        default: 'unread'
     }
 }, {
     timestamps: true
 });
-
-
 
 export default mongoose.model('Complents', ComplentsSchema);

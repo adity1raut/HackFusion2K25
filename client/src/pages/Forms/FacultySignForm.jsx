@@ -1,84 +1,160 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import React, { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import {
+  Mail,
+  User,
+  Building2,
+  UserCheck,
+  AlertCircle,
+  RefreshCw,
+} from "lucide-react";
 
 const FacultySignup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    department: '',
-    designation: '',
-    specialization: '',
-    experience: 0,
-    type: 'faculty'
+    name: "",
+    email: "",
+    type: "faculty"
   });
 
   const [otpForm, setOtpForm] = useState({
-    otp: '',
-    password: '',
-    confirmPassword: ''
+    otp: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === 'experience' ? Number(value) : value
+      [name]: value,
     }));
+
     // Clear error for the field being edited
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
   const handleOtpFormChange = (e) => {
     const { name, value } = e.target;
-    setOtpForm(prev => ({
+    setOtpForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
+
+    // Clear error for the field being edited
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
-  const validatePassword = () => {
-    const errors = {};
-    
-    if (otpForm.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+  const validateInitialForm = () => {
+    const newErrors = {};
+
+    // Name validation
+    if (!formData.name || formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters long";
     }
-    
+
+    // Email validation
+    if (!formData.email || !formData.email.endsWith("@sggs.ac.in")) {
+      newErrors.email = "Please use a valid SGGS email address";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validatePasswordForm = () => {
+    const newErrors = {};
+
+    // Basic password validation
+    if (!otpForm.password || otpForm.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    // Confirm password validation
     if (otpForm.password !== otpForm.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
-    
-    return errors;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleInitialSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form
+    if (!validateInitialForm()) {
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:4000/api/faculty/send-otp', formData);
-      
-      if (response.data.success) {
+      const response = await fetch(
+        "http://localhost:4000/api/faculty/send-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
         setOtpSent(true);
-        toast.success("OTP sent to your email. Please verify to complete registration.");
+        toast.success("OTP sent successfully to your email!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(data.message || "Failed to send OTP", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+        // Handle specific field errors
+        if (data.errors) {
+          setErrors(data.errors);
+        }
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
-      if (error.response?.data?.errors) {
-        setErrors(error.response.data.errors);
-      }
-      toast.error(errorMessage);
+      toast.error("An error occurred. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      console.error("Send OTP error:", error);
     } finally {
       setLoading(false);
     }
@@ -86,28 +162,64 @@ const FacultySignup = () => {
 
   const handleVerificationSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate passwords
-    const passwordErrors = validatePassword();
-    if (Object.keys(passwordErrors).length > 0) {
-      setErrors(passwordErrors);
+
+    // Validate form
+    if (!validatePasswordForm()) {
       return;
     }
 
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:4000/api/faculty/verify-and-register', {
-        email: formData.email,
-        otp: otpForm.otp,
-        password: otpForm.password
-      });
+      const response = await fetch(
+        "http://localhost:4000/api/faculty/verify-and-register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            otp: otpForm.otp,
+            password: otpForm.password,
+            confirmPassword: otpForm.confirmPassword,
+          }),
+        }
+      );
 
-      if (response.data.success) {
-        toast.success("Registration completed successfully!");
-        setTimeout(() => navigate('/login'), 2000);
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("Registration successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          onClose: () => {
+            navigate('/login');
+          }
+        });
+      } else {
+        toast.error(data.message || "Registration failed", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Verification failed. Please try again.');
+      toast.error("An error occurred during registration", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      console.error("Registration error:", error);
     } finally {
       setLoading(false);
     }
@@ -115,16 +227,50 @@ const FacultySignup = () => {
 
   const handleResendOtp = async () => {
     setLoading(true);
-    try {
-      const response = await axios.post('http://localhost:4000/api/faculty/resend-otp', {
-        email: formData.email
-      });
 
-      if (response.data.success) {
-        toast.success("New OTP has been sent to your email.");
+    try {
+      const response = await fetch(
+        "http://localhost:4000/api/faculty/resend-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: formData.email }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("New OTP sent successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(data.message || "Failed to resend OTP", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to resend OTP. Please try again.');
+      toast.error("An error occurred while resending OTP", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      console.error("Resend OTP error:", error);
     } finally {
       setLoading(false);
     }
@@ -134,22 +280,21 @@ const FacultySignup = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-3xl font-bold text-gray-900 flex items-center justify-center gap-2">
+            <Building2 className="w-8 h-8 text-blue-600" />
             Faculty Registration
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 hover:text-blue-500">
-              Sign in
-            </Link>
+          <p className="mt-2 text-sm text-gray-600 text-center">
+            Register with your SGGS email
           </p>
         </div>
 
         {!otpSent ? (
           // Initial Registration Form
           <form onSubmit={handleInitialSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 flex items-center">
+                <User className="mr-2 text-gray-400" />
                 Full Name
               </label>
               <input
@@ -157,8 +302,8 @@ const FacultySignup = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`mt-1 block w-full px-3 py-2 border ${
-                  errors.name ? 'border-red-300' : 'border-gray-300'
+                className={`mt-1 block w-full px-3 py-2 pl-10 border ${
+                  errors.name ? "border-red-300" : "border-gray-300"
                 } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 required
               />
@@ -167,8 +312,9 @@ const FacultySignup = () => {
               )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 flex items-center">
+                <Mail className="mr-2 text-gray-400" />
                 Email Address
               </label>
               <input
@@ -176,9 +322,10 @@ const FacultySignup = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`mt-1 block w-full px-3 py-2 border ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
+                className={`mt-1 block w-full px-3 py-2 pl-10 border ${
+                  errors.email ? "border-red-300" : "border-gray-300"
                 } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                placeholder="username@sggs.ac.in"
                 required
               />
               {errors.email && (
@@ -186,93 +333,42 @@ const FacultySignup = () => {
               )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Department
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 flex items-center">
+                <UserCheck className="mr-2 text-gray-400" />
+                Account Type
               </label>
-              <input
-                type="text"
-                name="department"
-                value={formData.department}
+              <select
+                name="type"
+                value={formData.type}
                 onChange={handleChange}
                 className={`mt-1 block w-full px-3 py-2 border ${
-                  errors.department ? 'border-red-300' : 'border-gray-300'
+                  errors.type ? "border-red-300" : "border-gray-300"
                 } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 required
-              />
-              {errors.department && (
-                <p className="mt-1 text-sm text-red-600">{errors.department}</p>
+              >
+                <option value="faculty">Faculty</option>
+                <option value="secretary">Secretary</option>
+                <option value="club">Club</option>
+              </select>
+              {errors.type && (
+                <p className="mt-1 text-sm text-red-600">{errors.type}</p>
               )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Designation
-              </label>
-              <input
-                type="text"
-                name="designation"
-                value={formData.designation}
-                onChange={handleChange}
-                className={`mt-1 block w-full px-3 py-2 border ${
-                  errors.designation ? 'border-red-300' : 'border-gray-300'
-                } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                required
-              />
-              {errors.designation && (
-                <p className="mt-1 text-sm text-red-600">{errors.designation}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Specialization (Optional)
-              </label>
-              <input
-                type="text"
-                name="specialization"
-                value={formData.specialization}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Years of Experience
-              </label>
-              <input
-                type="number"
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
-                min="0"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
+              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
             >
-              {loading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                'Continue'
-              )}
+              {loading ? <RefreshCw className="mr-2 animate-spin" /> : null}
+              {loading ? "Processing..." : "Continue"}
             </button>
           </form>
         ) : (
-          // OTP Verification and Password Setting Form
+          // OTP Verification Form
           <form onSubmit={handleVerificationSubmit} className="space-y-6">
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700">
                 Enter OTP
               </label>
@@ -281,21 +377,28 @@ const FacultySignup = () => {
                 name="otp"
                 value={otpForm.otp}
                 onChange={handleOtpFormChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                maxLength="6"
+                className={`mt-1 block w-full px-3 py-2 border ${
+                  errors.otp ? "border-red-300" : "border-gray-300"
+                } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 placeholder="Enter 6-digit OTP"
                 required
               />
+              {errors.otp && (
+                <p className="mt-1 text-sm text-red-600">{errors.otp}</p>
+              )}
               <button
                 type="button"
                 onClick={handleResendOtp}
                 disabled={loading}
-                className="mt-2 text-sm text-blue-600 hover:text-blue-500"
+                className="mt-2 text-sm text-blue-600 hover:text-blue-500 flex items-center"
               >
+                <RefreshCw className="mr-1" size={16} />
                 Resend OTP
               </button>
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700">
                 Set Password
               </label>
@@ -305,9 +408,9 @@ const FacultySignup = () => {
                 value={otpForm.password}
                 onChange={handleOtpFormChange}
                 className={`mt-1 block w-full px-3 py-2 border ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
+                  errors.password ? "border-red-300" : "border-gray-300"
                 } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                placeholder="At least 6 characters"
+                placeholder="Enter password"
                 required
               />
               {errors.password && (
@@ -315,7 +418,7 @@ const FacultySignup = () => {
               )}
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700">
                 Confirm Password
               </label>
@@ -325,39 +428,35 @@ const FacultySignup = () => {
                 value={otpForm.confirmPassword}
                 onChange={handleOtpFormChange}
                 className={`mt-1 block w-full px-3 py-2 border ${
-                  errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  errors.confirmPassword ? "border-red-300" : "border-gray-300"
                 } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 placeholder="Re-enter password"
                 required
               />
               {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
+              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
             >
-              {loading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                'Complete Registration'
-              )}
-            </button>
+              {loading ? <RefreshCw className="mr-2 animate-spin" /> : null}
+              {loading ? "Processing..." : "Register"}
+              </button>
           </form>
         )}
       </div>
       <ToastContainer />
     </div>
-  );
-};
+
+
+
+  );  
+  }
 
 export default FacultySignup;

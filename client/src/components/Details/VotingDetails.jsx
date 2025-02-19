@@ -32,16 +32,6 @@ const VotingDetails = () => {
         age: 42,
         qualification: 'Masters in Public Admin',
         constituency: 'West District'
-      },
-      { 
-        id: 4, 
-        name: 'Lisa Chen', 
-        party: 'Forward Party', 
-        votes: 165, 
-        details: 'Education Advocate',
-        age: 39,
-        qualification: 'PhD in Education',
-        constituency: 'Central District'
       }
     ],
     hasVoted: false,

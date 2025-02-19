@@ -8,6 +8,7 @@ import useElection from "./routes/ElectionRoute.js"
 import useComplaint from "./routes/CompleteRoute.js"
 import useElectionCandidate from "./routes/Election/ElectionRegistatonRoute.js"
 import useBooking  from "./routes/BookingRoute.js"
+import useFacultySignup from "./routes/Faculty/FacultySignRoute.js"
 import env from 'dotenv';
 import cors from "cors";
 
@@ -31,6 +32,7 @@ app.use(useComplaint);
 app.use(useElection);
 app.use(useElectionCandidate)
 app.use(useBooking)
+app.use(useFacultySignup)
 
 
 const PORT = 4000 ;
