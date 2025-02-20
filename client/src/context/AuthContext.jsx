@@ -18,12 +18,39 @@ export const AuthProvider = ({ children }) => {
         return () => window.removeEventListener("authChange", handleAuthChange);
     }, []);
 
+    const loginStudent = async (email, rollno, password) => {
+        const success = await AuthService.login(email, rollno, password);
+        if (success) {
+            setIsAuthenticated(true);
+            setUser(AuthService.getUserDetails());
+        }
+        return success;
+    };
+
+    const loginFaculty = async (email, type, password) => {
+        const success = await AuthService.facultylogin(email, type, password);
+        if (success) {
+            setIsAuthenticated(true);
+            setUser(AuthService.getUserDetails());
+        }
+        return success;
+    };
+
+    const logout = () => {
+        AuthService.logout();
+        setIsAuthenticated(false);
+        setUser(null);
+    };
+
     return (
-        <AuthContext.Provider value={{ 
-            isAuthenticated, 
+        <AuthContext.Provider value={{
+            isAuthenticated,
             setIsAuthenticated,
             user,
-            setUser 
+            setUser,
+            loginStudent,
+            loginFaculty,
+            logout
         }}>
             {children}
         </AuthContext.Provider>

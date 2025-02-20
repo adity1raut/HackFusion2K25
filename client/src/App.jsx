@@ -24,6 +24,7 @@ import FacultyLogin from './pages/Forms/FacultyLogin';
 import AdminBookingDashboard from './components/Admin/AdminBookingDashboard';
 import AdminComplaintsDashboard from './components/Admin/AdminComplaintsDashboard';
 import AdminLeaveDashboard from './components/Admin/AdminLeaveDashboard';
+import FacultyProfile from "./pages/Main/FalcultyProfile"
 
 
 function App() {
@@ -34,7 +35,7 @@ function App() {
           <div className='min-h-screen'>
             <Navbar />
             <Routes>
-              <Route path="/" element={<Dhasboard />} />
+              {/* <Route path="/" element={<Dhasboard />} /> */}
               <Route path="/signin" element={<SignUpPage />} />
               <Route path="/signin/student" element={<StudentSignUp />} />
               <Route path="/signin/faculty" element={<FacultySignup />} />
@@ -45,6 +46,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgetPassFrom />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route element={<PrivateRoute />}>
+               <Route path="/dashboard" element={<Dhasboard />} />
                <Route path='/admin' element = {<AdminBookingDashboard/>}/>
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/election" element={<ElectionData />} />
@@ -52,6 +54,7 @@ function App() {
                 <Route path="/leave-application" element={<LeaveApplicationForm />} />
                 <Route path="/doctor-appointment" element={<DoctorAppointmentForm />} />
                 <Route path="/bookings" element={<GroundBooking />} />
+                <Route path='/faculty/profile' element={<FacultyProfile />} />
                 <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
                 <Route path="/condidate-election-form" element={<CandidateElectionForm />} />
                 <Route path="/bookings/details/:name" element={<VenueDetails/>}/>

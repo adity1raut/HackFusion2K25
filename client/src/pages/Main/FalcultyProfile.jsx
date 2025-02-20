@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Card from "../../components/Other/Card";
 import { useNavigate, Link } from 'react-router-dom';
-
+import AuthService from '../../utils/AuthService';
 const EditProfileModal = ({ isOpen, onClose, facultyInfo, onUpdate }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -206,8 +206,13 @@ const FacultyProfile = () => {
 
   const fetchProfile = async () => {
     try {
+      const userDetails = AuthService.getUserDetails();
+      console.log(userDetails);
+      console.log(localStorage.getItem('email'));
       const token = localStorage.getItem('token');
-      const email = localStorage.getItem('email');
+      const email = "work@sggs.ac.in";
+
+      console.log('Fetching profile' , email, token);
 
       if (!token || !email) {
         navigate('/login');
@@ -355,9 +360,9 @@ const FacultyProfile = () => {
             </Card>
             <Card>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link to="/manage-leaves">
+                <Link to="/faculty-availability">
                   <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    Manage Leave Applications
+                    Update Availability
                   </button>
                 </Link>
                 <Link to="/manage-complaints">

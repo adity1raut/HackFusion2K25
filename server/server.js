@@ -9,6 +9,7 @@ import useComplaint from "./routes/CompleteRoute.js"
 import useElectionCandidate from "./routes/Election/ElectionRegistatonRoute.js"
 import useBooking  from "./routes/BookingRoute.js"
 import useFacultySignup from "./routes/Faculty/FacultySignRoute.js"
+import useFacultyLogin from "./routes/Faculty/FacultyLogin.js"
 import useLeave from "./routes/LeavRoute.js"
 import env from 'dotenv';
 import cors from "cors";
@@ -35,6 +36,7 @@ app.use(useElectionCandidate)
 app.use(useBooking)
 app.use(useFacultySignup)
 app.use(useLeave)
+app.use(useFacultyLogin)
 
 
 const PORT = 4000 ;

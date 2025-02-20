@@ -6,6 +6,8 @@ import {
   UserCheck,
   AlertCircle 
 } from 'lucide-react';
+import AuthService from "../../utils/AuthService";
+import { toast , ToastContainer } from 'react-toastify';
 
 const FacultyLogin = () => {
   const [formData, setFormData] = useState({
@@ -27,9 +29,11 @@ const FacultyLogin = () => {
 
     // Clear specific error when user starts typing
     if (errors[name]) {
-      const newErrors = { ...errors };
-      delete newErrors[name];
-      setErrors(newErrors);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
 
     // Clear server error
@@ -41,21 +45,18 @@ const FacultyLogin = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Email validation
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!formData.email.endsWith('@sggs.ac.in')) {
       newErrors.email = 'Please use a valid SGGS email address';
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
     }
 
-    // Type validation
     if (!formData.type) {
       newErrors.type = 'Please select an account type';
     }
@@ -67,42 +68,31 @@ const FacultyLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError(null);
-
-    // Reset errors
     setErrors({});
 
-    // Validate form
     if (!validateForm()) {
       return;
     }
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/faculty/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
+      const success = await AuthService.facultylogin(
+        formData.email,
+        formData.type,
+        formData.password
+      );
 
-      const data = await response.json();
-
-      if (data.success) {
-        // Store user data securely
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userEmail', data.user.email);
-        localStorage.setItem('userType', data.user.type);
-        
-        // Navigate to appropriate dashboard
-        window.location.href = '/faculty/dashboard';
-      } else {
-        // Handle specific login failures
-        setServerError(data.message || 'Login failed. Please check your credentials.');
+      if (success) {
+        localStorage.setItem('email', formData.email);
+        toast.success("Login successful! Redirecting...");
+                setTimeout(() => {
+                  navigate('/profile');
+                }, 2000);
+        window.location.href = '/faculty/profile';
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setServerError('Network error. Please try again.');
+      const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      setServerError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -116,22 +106,22 @@ const FacultyLogin = () => {
             <User className="w-8 h-8 text-blue-600" />
             Faculty Login
           </h2>
-          <p className="mt-2 text-sm text-gray-600 text-center">
+          <p className="mt-2 text-sm text-gray-600">
             Sign in to your account
           </p>
         </div>
 
         {serverError && (
           <div className="mb-4 p-4 bg-red-50 border border-red-400 text-red-700 rounded flex items-center">
-            <AlertCircle className="mr-2 text-red-500" />
+            <AlertCircle className="w-5 h-5 mr-2 text-red-500" />
             {serverError}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative">
+          <div>
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <Mail className="mr-2 text-gray-400" />
+              <Mail className="w-5 h-5 mr-2 text-gray-400" />
               Email Address
             </label>
             <input
@@ -139,20 +129,19 @@ const FacultyLogin = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`mt-1 block w-full px-3 py-2 pl-10 border ${
+              className={`mt-1 block w-full px-3 py-2 border ${
                 errors.email ? 'border-red-300' : 'border-gray-300'
-              } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+              } rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500`}
               placeholder="username@sggs.ac.in"
-              required
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-600">{errors.email}</p>
             )}
           </div>
 
-          <div className="relative">
+          <div>
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <UserCheck className="mr-2 text-gray-400" />
+              <UserCheck className="w-5 h-5 mr-2 text-gray-400" />
               Account Type
             </label>
             <select
@@ -161,8 +150,7 @@ const FacultyLogin = () => {
               onChange={handleChange}
               className={`mt-1 block w-full px-3 py-2 border ${
                 errors.type ? 'border-red-300' : 'border-gray-300'
-              } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-              required
+              } rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500`}
             >
               <option value="">Select Account Type</option>
               <option value="faculty">Faculty</option>
@@ -174,9 +162,9 @@ const FacultyLogin = () => {
             )}
           </div>
 
-          <div className="relative">
+          <div>
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <Key className="mr-2 text-gray-400" />
+              <Key className="w-5 h-5 mr-2 text-gray-400" />
               Password
             </label>
             <input
@@ -184,11 +172,10 @@ const FacultyLogin = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={`mt-1 block w-full px-3 py-2 pl-10 border ${
+              className={`mt-1 block w-full px-3 py-2 border ${
                 errors.password ? 'border-red-300' : 'border-gray-300'
-              } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+              } rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500`}
               placeholder="Enter your password"
-              required
             />
             {errors.password && (
               <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -218,7 +205,7 @@ const FacultyLogin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
           >
             {loading ? (
               <>
@@ -236,13 +223,14 @@ const FacultyLogin = () => {
           <div className="text-center mt-4">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <a href="/signup" className="text-blue-600 hover:text-blue-500">
+              <a href="/signin" className="text-blue-600 hover:text-blue-500">
                 Sign up
               </a>
             </p>
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -27,6 +27,30 @@ const AuthService = {
             throw error;
         }
     },
+    facultylogin: async (email, type, password) => {
+        try {
+            const response = await axios.post('/api/faculty/login', {
+                email,
+                type: type,
+                password
+            });
+
+            if (response.data.success) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('email', response.data.email);
+                localStorage.setItem('type', response.data.type);
+                
+                // Dispatch auth change event
+                window.dispatchEvent(new Event("authChange"));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Login error:', error.response?.data || error);
+            throw error;
+        }
+    },
+
 
     isAuthenticated: () => {
         const token = localStorage.getItem('token');
@@ -48,14 +72,15 @@ const AuthService = {
         localStorage.removeItem('token');
         localStorage.removeItem('email');
         localStorage.removeItem('rollNumber');
-        // Dispatch auth change event
+        localStorage.removeItem('type');
         window.dispatchEvent(new Event("authChange"));
     },
 
     getUserDetails: () => {
         return {
             email: localStorage.getItem('email'),
-            rollNumber: localStorage.getItem('rollNumber')
+            rollNumber: localStorage.getItem('rollNumber'),
+            type : localStorage.getItem('type')
         };
     }
 };

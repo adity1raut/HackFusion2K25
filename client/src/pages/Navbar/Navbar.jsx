@@ -89,7 +89,7 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center space-x-1">
                         {!isAuthenticated ? (
                             <>
-                                <NavButton path="/">Dashboard</NavButton>
+                                {/* <NavButton path="/">Dashboard</NavButton> */}
                                 <NavButton path="/login">Login</NavButton>
                                 <NavButton path="/signin">Signup</NavButton>
                                 <NavButton path="/forgot-password">Forgot Password</NavButton>
@@ -127,7 +127,7 @@ const Navbar = () => {
                     <div className="py-2 space-y-1 px-2">
                         {!isAuthenticated ? (
                             <>
-                                <NavButton path="/">Dashboard</NavButton>
+                                {/* <NavButton path="/">Dashboard</NavButton> */}
                                 <NavButton path="/login">Login</NavButton>
                                 <NavButton path="/signin">Signup</NavButton>
                                 <NavButton path="/forgot-password">Forgot Password</NavButton>
