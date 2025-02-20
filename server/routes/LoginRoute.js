@@ -119,7 +119,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-router.post('/api/login', login);
+router.post('/api/student/login', login);
 router.get('/api/profile/:email', authenticateToken, profile);
 router.put('/api/profile/:email', authenticateToken, upload.single('profileImage'), updateProfile);
 

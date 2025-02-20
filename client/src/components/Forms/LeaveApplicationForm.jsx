@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Calendar, Clock, UserCircle, Users, FileText } from 'lucide-react';
@@ -20,11 +19,15 @@ const LeaveApplicationForm = () => {
       reason_for_leave: '',
       leave_start_date: '',
       leave_end_date: ''
+    },
+    additional_information: {
+      comments: ''
     }
   });
 
   const [activeSection, setActiveSection] = useState('student_information');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
 
   const handleChange = (e, section) => {
     const { name, value } = e.target;
@@ -35,28 +38,61 @@ const LeaveApplicationForm = () => {
         [name]: value
       }
     }));
+    // Clear validation errors when the user starts typing
+    if (validationErrors[section]?.[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [section]: {
+          ...prev[section],
+          [name]: ''
+        }
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setIsSubmitting(true);
     try {
-      await axios.post('http://localhost:4000/api/leave-applications', formData);
-      toast.success('Leave application submitted successfully!', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
+      const response = await fetch('http://localhost:4000/api/leave-applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 400 && data.errors) {
+          // Handle validation errors
+          const errors = data.errors.reduce((acc, error) => {
+            const [section, field] = error.path.split('.');
+            if (!acc[section]) acc[section] = {};
+            acc[section][field] = error.msg;
+            return acc;
+          }, {});
+          setValidationErrors(errors);
+          toast.error('Please fix the errors in the form.');
+        } else {
+          throw new Error(data.message || 'Failed to submit application');
+        }
+        return;
+      }
+
+      toast.success('Leave application submitted successfully!');
       setFormData({
         student_information: { roll_no: '', student_name: '', student_email: '' },
         parent_information: { parent_name: '', parent_email: '' },
-        leave_details: { reason_for_leave: '', leave_start_date: '', leave_end_date: '' }
+        leave_details: { reason_for_leave: '', leave_start_date: '', leave_end_date: '' },
+        additional_information: { comments: '' }
       });
+      setActiveSection('student_information');
+      setValidationErrors({});
     } catch (error) {
-      toast.error('Error submitting application. Please try again.', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      toast.error(error.message || 'Error submitting application');
     } finally {
       setIsSubmitting(false);
     }
@@ -65,6 +101,25 @@ const LeaveApplicationForm = () => {
   const inputClassName = "mt-1 block w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/50 hover:bg-white";
   const labelClassName = "block text-sm font-medium text-gray-600 mb-1";
 
+  const renderInput = (section, name, label, type = "text") => (
+    <div>
+      <label className={labelClassName}>
+        {label}<span className="text-red-500 ml-1">*</span>
+      </label>
+      <input
+        type={type}
+        name={name}
+        value={formData[section][name]}
+        onChange={(e) => handleChange(e, section)}
+        className={`${inputClassName} ${validationErrors[section]?.[name] ? 'border-red-500' : ''}`}
+        placeholder={`Enter ${label.toLowerCase()}`}
+      />
+      {validationErrors[section]?.[name] && (
+        <p className="text-red-500 text-sm mt-1">{validationErrors[section][name]}</p>
+      )}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="max-w-6xl mx-auto px-4 py-8 pt-24">
@@ -72,8 +127,8 @@ const LeaveApplicationForm = () => {
           Leave Application Form
         </h1>
 
-        <div className="flex flex-col lg:flex-row gap-8 justify-center">
-          <div className="lg:w-[480px]">
+        <div className="flex flex-col items-center gap-8 justify-center">
+          <div className="lg:w-[600px]">
             <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl p-8 sticky top-8 border border-gray-100">
               {/* Progress Indicator */}
               <div className="flex justify-between mb-8">
@@ -103,50 +158,9 @@ const LeaveApplicationForm = () => {
                   <h3 className="text-2xl font-bold text-gray-800">Student Information</h3>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <label className={labelClassName}>
-                        Full Name<span className="text-red-500 ml-1">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="student_name"
-                        value={formData.student_information.student_name}
-                        onChange={(e) => handleChange(e, 'student_information')}
-                        className={inputClassName}
-                        placeholder="Enter your full name"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className={labelClassName}>
-                      Roll Number<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="roll_no"
-                      value={formData.student_information.roll_no}
-                      onChange={(e) => handleChange(e, 'student_information')}
-                      className={inputClassName}
-                      placeholder="Enter your roll number"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClassName}>
-                      Email Address<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="student_email"
-                      value={formData.student_information.student_email}
-                      onChange={(e) => handleChange(e, 'student_information')}
-                      className={inputClassName}
-                      placeholder="Enter your email address"
-                      required
-                    />
-                  </div>
+                  {renderInput('student_information', 'student_name', 'Full Name')}
+                  {renderInput('student_information', 'roll_no', 'Roll Number')}
+                  {renderInput('student_information', 'student_email', 'Email Address', 'email')}
                 </div>
               </div>
 
@@ -157,34 +171,8 @@ const LeaveApplicationForm = () => {
                   <h3 className="text-2xl font-bold text-gray-800">Parent Information</h3>
                 </div>
                 <div className="space-y-4">
-                  <div>
-                    <label className={labelClassName}>
-                      Parent's Name<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="parent_name"
-                      value={formData.parent_information.parent_name}
-                      onChange={(e) => handleChange(e, 'parent_information')}
-                      className={inputClassName}
-                      placeholder="Enter parent's name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClassName}>
-                      Parent's Email<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="parent_email"
-                      value={formData.parent_information.parent_email}
-                      onChange={(e) => handleChange(e, 'parent_information')}
-                      className={inputClassName}
-                      placeholder="Enter parent's email"
-                      required
-                    />
-                  </div>
+                  {renderInput('parent_information', 'parent_name', "Parent's Name")}
+                  {renderInput('parent_information', 'parent_email', "Parent's Email", 'email')}
                 </div>
               </div>
 
@@ -204,38 +192,29 @@ const LeaveApplicationForm = () => {
                       value={formData.leave_details.reason_for_leave}
                       onChange={(e) => handleChange(e, 'leave_details')}
                       rows="4"
-                      className={`${inputClassName} resize-none`}
+                      className={`${inputClassName} resize-none ${validationErrors.leave_details?.reason_for_leave ? 'border-red-500' : ''}`}
                       placeholder="Please provide detailed reason for leave"
-                      required
                     />
+                    {validationErrors.leave_details?.reason_for_leave && (
+                      <p className="text-red-500 text-sm mt-1">{validationErrors.leave_details.reason_for_leave}</p>
+                    )}
                   </div>
                   <div className="flex gap-4">
-                    <div className="flex-1">
-                      <label className={labelClassName}>
-                        Start Date<span className="text-red-500 ml-1">*</span>
-                      </label>
-                      <input
-                        type="date"
-                        name="leave_start_date"
-                        value={formData.leave_details.leave_start_date}
-                        onChange={(e) => handleChange(e, 'leave_details')}
-                        className={inputClassName}
-                        required
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label className={labelClassName}>
-                        End Date<span className="text-red-500 ml-1">*</span>
-                      </label>
-                      <input
-                        type="date"
-                        name="leave_end_date"
-                        value={formData.leave_details.leave_end_date}
-                        onChange={(e) => handleChange(e, 'leave_details')}
-                        className={inputClassName}
-                        required
-                      />
-                    </div>
+                    {renderInput('leave_details', 'leave_start_date', 'Start Date', 'date')}
+                    {renderInput('leave_details', 'leave_end_date', 'End Date', 'date')}
+                  </div>
+                  <div>
+                    <label className={labelClassName}>
+                      Additional Comments
+                    </label>
+                    <textarea
+                      name="comments"
+                      value={formData.additional_information.comments}
+                      onChange={(e) => handleChange(e, 'additional_information')}
+                      rows="2"
+                      className={`${inputClassName} resize-none`}
+                      placeholder="Any additional comments (optional)"
+                    />
                   </div>
                 </div>
               </div>
@@ -256,8 +235,9 @@ const LeaveApplicationForm = () => {
               </button>
             </form>
           </div>
+
           <div className="flex w-full justify-center py-10">
-            <div className="w-full lg:w-[640px]">
+            <div className="w-full lg:w-[1000px]">
               <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl p-6">
                 <div className="flex items-center mb-6">
                   <FileText className="w-6 h-6 text-purple-600 mr-2" />

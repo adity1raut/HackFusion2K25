@@ -139,9 +139,9 @@ const FacultyAvailabilityForm = () => {
                     Faculty Availability Management
                 </h1>
 
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col items-center gap-8">
                     {/* Form Section */}
-                    <div className="lg:w-1/3">
+                    <div className="lg:w-6/12">
                         <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 sticky top-8 border border-gray-100">
                             <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">Add Availability</h2>
                             

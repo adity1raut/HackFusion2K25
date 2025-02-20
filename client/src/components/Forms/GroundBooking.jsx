@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Calendar, Clock, MapPin, MessageSquare, Phone, Mail, User, Users } from 'lucide-react';
+import { Calendar, Clock, MapPin, MessageSquare, Phone, Mail, User } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import GroundComponents from "../Other/GroundCopoants";
+
+const VENUES = ["Auditorium", "Classrooms", "Ground"];
 
 function GroundBooking() {
-    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -17,34 +18,66 @@ function GroundBooking() {
         message: "",
         status: "pending"
     });
+    const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const venues = [
-        {
-            venue: "Auditorium",
-            name: "Auditorium",
-            capacity: "400 Seats",
-            location: "Admin Building",
-            image: "https://res.cloudinary.com/dg6qtpags/image/upload/v1739874682/your-cloudinary-folder-name/yeq93de3i3jk5yniybz8.jpg",
-            prize: "20,000"
-        },
-        {
-            venue: "Classrooms",
-            name: "Classrooms",
-            capacity: "100 Seats",
-            image: "https://res.cloudinary.com/dg6qtpags/image/upload/v1739874684/your-cloudinary-folder-name/o6l8nuliwj7w13xtphiz.jpg",
-            location: "Near ExTc Department",
-            prize: "5,000"
-        },
-        {
-            venue: "Ground",
-            name: "Ground",
-            image: "https://res.cloudinary.com/dg6qtpags/image/upload/v1739874685/your-cloudinary-folder-name/giq98eafvxn4pz6j5acc.webp",
-            capacity: "Varies depending on the events.",
-            location: "Near Sahyadri Hostel",
-            prize: "10,000"
+    const validateForm = () => {
+        const newErrors = {};
+        const today = new Date();
+        const startDate = new Date(formData.date);
+        const endDate = new Date(formData.lastdate);
+
+        // Name validation
+        if (!formData.name.trim()) {
+            newErrors.name = "Name is required";
+        } else if (formData.name.length < 2 || formData.name.length > 100) {
+            newErrors.name = "Name must be between 2 and 100 characters";
         }
-    ];
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            newErrors.email = "Valid email is required";
+        }
+
+        // Phone validation
+        const phoneRegex = /^[\d-+() ]{10,15}$/;
+        if (!phoneRegex.test(formData.phone)) {
+            newErrors.phone = "Please enter a valid phone number";
+        }
+
+        // Date validation
+        if (!formData.date) {
+            newErrors.date = "Start date is required";
+        } else if (startDate < today) {
+            newErrors.date = "Start date cannot be in the past";
+        }
+
+        if (formData.lastdate && endDate < startDate) {
+            newErrors.lastdate = "End date must be after start date";
+        }
+
+        // Time validation
+        const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+        if (!timeRegex.test(formData.time)) {
+            newErrors.time = "Please enter a valid time in HH:MM format";
+        }
+
+        // Message validation
+        if (!formData.message.trim()) {
+            newErrors.message = "Message is required";
+        } else if (formData.message.length < 10 || formData.message.length > 500) {
+            newErrors.message = "Message must be between 10 and 500 characters";
+        }
+
+        // Venue validation
+        if (!VENUES.includes(formData.venue)) {
+            newErrors.venue = "Please select a valid venue";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -52,13 +85,26 @@ function GroundBooking() {
             ...prevData,
             [id]: value,
         }));
+        // Clear error when field is modified
+        if (errors[id]) {
+            setErrors(prev => ({
+                ...prev,
+                [id]: undefined
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (!validateForm()) {
+            toast.error("Please correct the errors in the form");
+            return;
+        }
+
         setIsSubmitting(true);
         try {
-            const response = await fetch('/api/booking', {
+            const response = await fetch('http://localhost:4000/api/booking', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,10 +115,23 @@ function GroundBooking() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Error creating booking');
+                if (response.status === 409) {
+                    toast.error("This venue is already booked for the selected date and time range");
+                } else if (data.errors) {
+                    // Handle validation errors from server
+                    const serverErrors = {};
+                    data.errors.forEach(error => {
+                        serverErrors[error.param] = error.msg;
+                    });
+                    setErrors(serverErrors);
+                    toast.error("Please correct the errors in the form");
+                } else {
+                    throw new Error(data.message || 'Error creating booking');
+                }
+                return;
             }
 
-            toast.success(data.message || "Booking created successfully!");
+            toast.success("Booking created successfully!");
             setFormData({
                 name: "", email: "", phone: "", venue: "",
                 date: "", lastdate: "", time: "", message: "", status: "pending"
@@ -84,51 +143,23 @@ function GroundBooking() {
         }
     };
 
-    const handleViewDetails = (venueName) => {
-        navigate(`/bookings/details/${venueName}`);
-    };
-
-    const inputClassName = "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white/90";
+    const inputClassName = (fieldName) => `
+        w-full p-3 border ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'} 
+        rounded-lg focus:outline-none focus:ring-2 
+        ${errors[fieldName] ? 'focus:ring-red-500' : 'focus:ring-green-500'} 
+        focus:border-transparent transition-all duration-200 bg-white/90
+    `;
+    
     const labelClassName = "block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2";
+    const errorClassName = "text-red-500 text-sm mt-1";
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
             <div className="max-w-6xl mx-auto p-4 pt-24">
-                {/* Venue Cards */}
                 <h1 className="text-3xl font-bold text-center text-gray-800 mb-12">
                     Available Venues
                 </h1>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                    {venues.map((venue, index) => (
-                        <div key={index} className="bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                            <div className="relative">
-                                <img src={venue.image} className="w-full h-48 object-cover" alt={venue.name} />
-                                <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full shadow-md">
-                                    <span className="text-sm font-medium text-gray-700">₹{venue.prize}</span>
-                                </div>
-                            </div>
-
-                            <div className="p-6">
-                                <h5 className="text-xl font-bold text-gray-800 mb-4">{venue.name}</h5>
-                                <div className="space-y-3 mb-4">
-                                    <div className="flex items-center gap-2 text-gray-600 text-sm">
-                                        <MapPin size={16} />
-                                        <span>{venue.location}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-gray-600 text-sm">
-                                        <Users size={16} />
-                                        <span>{venue.capacity}</span>
-                                    </div>
-                                </div>
-                                <button onClick={() => handleViewDetails(venue.name)} className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg text-sm font-medium flex items-center justify-center gap-2">
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
+                <GroundComponents />
                 <div className="my-16 max-w-4xl mx-auto border-t border-green-200" />
 
                 <div className="flex justify-center pb-16">
@@ -146,12 +177,13 @@ function GroundBooking() {
                                     <input
                                         type="text"
                                         id="name"
-                                        className={inputClassName}
+                                        className={inputClassName('name')}
                                         placeholder="Enter your name"
                                         value={formData.name}
                                         onChange={handleChange}
                                         required
                                     />
+                                    {errors.name && <p className={errorClassName}>{errors.name}</p>}
                                 </div>
 
                                 <div>
@@ -161,12 +193,13 @@ function GroundBooking() {
                                     <input
                                         type="email"
                                         id="email"
-                                        className={inputClassName}
+                                        className={inputClassName('email')}
                                         placeholder="Enter your email"
                                         value={formData.email}
                                         onChange={handleChange}
                                         required
                                     />
+                                    {errors.email && <p className={errorClassName}>{errors.email}</p>}
                                 </div>
 
                                 <div>
@@ -176,12 +209,13 @@ function GroundBooking() {
                                     <input
                                         type="tel"
                                         id="phone"
-                                        className={inputClassName}
+                                        className={inputClassName('phone')}
                                         placeholder="Enter your phone number"
                                         value={formData.phone}
                                         onChange={handleChange}
                                         required
                                     />
+                                    {errors.phone && <p className={errorClassName}>{errors.phone}</p>}
                                 </div>
 
                                 <div>
@@ -190,18 +224,17 @@ function GroundBooking() {
                                     </label>
                                     <select
                                         id="venue"
-                                        className={inputClassName}
+                                        className={inputClassName('venue')}
                                         value={formData.venue}
                                         onChange={handleChange}
                                         required
                                     >
                                         <option value="">Select a venue</option>
-                                        {venues.map((venue, index) => (
-                                            <option key={index} value={venue.name}>
-                                                {venue.name}
-                                            </option>
+                                        {VENUES.map(venue => (
+                                            <option key={venue} value={venue}>{venue}</option>
                                         ))}
                                     </select>
+                                    {errors.venue && <p className={errorClassName}>{errors.venue}</p>}
                                 </div>
                             </div>
 
@@ -213,11 +246,12 @@ function GroundBooking() {
                                     <input
                                         type="date"
                                         id="date"
-                                        className={inputClassName}
+                                        className={inputClassName('date')}
                                         value={formData.date}
                                         onChange={handleChange}
                                         required
                                     />
+                                    {errors.date && <p className={errorClassName}>{errors.date}</p>}
                                 </div>
 
                                 <div>
@@ -227,11 +261,11 @@ function GroundBooking() {
                                     <input
                                         type="date"
                                         id="lastdate"
-                                        className={inputClassName}
+                                        className={inputClassName('lastdate')}
                                         value={formData.lastdate}
                                         onChange={handleChange}
-                                        required
                                     />
+                                    {errors.lastdate && <p className={errorClassName}>{errors.lastdate}</p>}
                                 </div>
 
                                 <div>
@@ -241,11 +275,12 @@ function GroundBooking() {
                                     <input
                                         type="time"
                                         id="time"
-                                        className={inputClassName}
+                                        className={inputClassName('time')}
                                         value={formData.time}
                                         onChange={handleChange}
                                         required
                                     />
+                                    {errors.time && <p className={errorClassName}>{errors.time}</p>}
                                 </div>
                             </div>
 
@@ -255,13 +290,14 @@ function GroundBooking() {
                                 </label>
                                 <textarea
                                     id="message"
-                                    className={`${inputClassName} resize-none`}
+                                    className={`${inputClassName('message')} resize-none`}
                                     placeholder="Additional details or special requests..."
                                     rows="4"
                                     value={formData.message}
                                     onChange={handleChange}
                                     required
                                 ></textarea>
+                                {errors.message && <p className={errorClassName}>{errors.message}</p>}
                             </div>
 
                             <button

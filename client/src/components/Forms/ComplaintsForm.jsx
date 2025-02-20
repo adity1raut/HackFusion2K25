@@ -81,9 +81,9 @@ const ComplaintsForm = () => {
                     Complaints Management
                 </h1>
 
-                <div className="flex flex-col lg:flex-row gap-8 justify-center">
+                <div className="flex flex-col  items-center gap-8 justify-center">
                     {/* Form Section */}
-                    <div className="w-full lg:w-[480px]">
+                    <div className="w-full lg:w-[600px]">
                         <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-sm shadow-xl rounded-xl p-6 sticky top-8">
                             <div className="space-y-5">
                                 <div>
@@ -159,7 +159,7 @@ const ComplaintsForm = () => {
                     </div>
 
 
-                    <div className="w-full lg:w-[640px]">
+                    <div className="w-full lg:w-[1000px]">
                         <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-xl p-6">
                             <h2 className="text-xl font-bold text-gray-800 mb-6">Previous Complaints</h2>
                             <ComplainTable />

@@ -83,10 +83,7 @@ const LoginForm = () => {
       if (success) {
         if (rememberMe) {
           localStorage.setItem('email', formData.email);
-        } else {
-          localStorage.removeItem('email');
-        }
-        
+        } 
         toast.success("Login successful! Redirecting...");
         setTimeout(() => {
           navigate('/profile');
@@ -217,7 +214,7 @@ const LoginForm = () => {
               <div className="text-center pt-2">
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
-                  <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                  <Link to="/signin" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
                     Sign up
                   </Link>
                 </p>

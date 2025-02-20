@@ -1,15 +1,18 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { User, LogOut } from 'lucide-react';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
 import Card from "../../components/Other/Card";
-import { useNavigate , Link } from 'react-router-dom';
 
+// EditProfileModal component remains the same as before
 const EditProfileModal = ({ isOpen, onClose, studentInfo, onUpdate }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     branch: '',
     rollno: '',
-    profile: null
+    profile: null,
+    year: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -70,127 +73,127 @@ const EditProfileModal = ({ isOpen, onClose, studentInfo, onUpdate }) => {
   if (!isOpen) return null;
 
   return (
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-                    <div className="fixed inset-0 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
-              <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
-              
-              {error && (
-                <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
-                  {error}
-                </div>
-              )}
-              
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Profile Picture
-                  </label>
-                  <input
-                    type="file"
-                    name="profile"
-                    onChange={handleChange}
-                    accept="image/*"
-                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Academic Year
-                  </label>
-                  <input
-                    type="text"
-                    name="year"
-                    value={formData.year}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Branch
-                  </label>
-                  <input
-                    type="text"
-                    name="branch"
-                    value={formData.branch}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Roll No
-                  </label>
-                  <input
-                    type="text"
-                    name="rollno"
-                    value={formData.rollno}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-                
-                <div className="flex justify-end space-x-3 mt-6">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors duration-200"
-                    disabled={loading}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 transition-colors duration-200"
-                    disabled={loading}
-                  >
-                    {loading ? 'Saving...' : 'Save Changes'}
-                  </button>
-                </div>
-              </form>
+    <div className="fixed inset-0 z-50">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
+          <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+              {error}
             </div>
-          </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Profile Picture
+              </label>
+              <input
+                type="file"
+                name="profile"
+                onChange={handleChange}
+                accept="image/*"
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Academic Year
+              </label>
+              <input
+                type="text"
+                name="year"
+                value={formData.year}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Branch
+              </label>
+              <input
+                type="text"
+                name="branch"
+                value={formData.branch}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Roll No
+              </label>
+              <input
+                type="text"
+                name="rollno"
+                value={formData.rollno}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors duration-200"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 transition-colors duration-200"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
+    </div>
   );
 };
 
-const StudentProfile = () => {
+const ProfilePage = () => {
   const [studentInfo, setStudentInfo] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -205,11 +208,14 @@ const StudentProfile = () => {
     try {
       const token = localStorage.getItem('token');
       const email = localStorage.getItem('email');
+      console.log('email: ' + email);
+      console.log('token: ' + token);
 
       if (!token || !email) {
         navigate('/login');
         return;
       }
+    
 
       const response = await axios.get(`http://localhost:4000/api/profile/${email}`, {
         headers: {
@@ -218,18 +224,7 @@ const StudentProfile = () => {
       });
 
       if (response.data.success && response.data.data) {
-        const userData = response.data.data;
-        const transformedData = {
-          ...userData,
-          generalInfo: {
-            'Roll Number': userData.rollno || 'N/A',
-            'Email': userData.email || 'N/A',
-            'Branch': userData.branch || 'N/A',
-            'Type': userData.type || 'N/A',
-            'Acdamic Year': userData.year || 'N/A',
-          }
-        };
-        setStudentInfo(transformedData);
+        setStudentInfo(response.data.data);
       }
 
       setLoading(false);
@@ -260,11 +255,18 @@ const StudentProfile = () => {
       );
 
       if (response.data.success) {
-        await fetchProfile(); // Refresh profile data
+        await fetchProfile();
       }
     } catch (error) {
       throw error;
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('email');
+    localStorage.removeItem('rollNumber');
+    navigate('/login');
   };
 
   if (loading) {
@@ -298,38 +300,38 @@ const StudentProfile = () => {
         <h1 className="text-3xl md:text-4xl text-purple-600 text-center font-bold mb-2">
           Student Profile
         </h1>
-        
+
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {/* Profile Card */}
           <Card className="bg-white shadow-lg rounded-xl overflow-hidden">
             <div className="flex flex-col items-center p-6">
               <div className="relative group">
                 <img
-                  src={studentInfo.profile}
+                  src={studentInfo?.profile || '/api/placeholder/128/128'}
                   alt="profile"
                   className="w-24 h-24 md:w-32 md:h-32 rounded-full mb-4 object-cover ring-4 ring-purple-100 transition-all duration-300 hover:ring-purple-300"
                 />
               </div>
-              
+
               <h2 className="text-xl font-bold mb-4 text-gray-800">
-                {studentInfo.name || 'N/A'}
+                {studentInfo?.name || 'N/A'}
               </h2>
-              
+
               <div className="space-y-3 w-full text-gray-600">
                 <p className="flex justify-between">
                   <span className="font-medium">Roll Number:</span>
-                  <span>{studentInfo.rollno || 'N/A'}</span>
+                  <span>{studentInfo?.rollno || 'N/A'}</span>
                 </p>
                 <p className="flex justify-between">
                   <span className="font-medium">Email:</span>
-                  <span className="text-sm">{studentInfo.email || 'N/A'}</span>
+                  <span className="text-sm">{studentInfo?.email || 'N/A'}</span>
                 </p>
                 <p className="flex justify-between">
                   <span className="font-medium">Branch:</span>
-                  <span>{studentInfo.branch || 'N/A'}</span>
+                  <span>{studentInfo?.branch || 'N/A'}</span>
                 </p>
               </div>
-              
+
               <div className="mt-6 w-full space-y-3">
                 <button
                   onClick={() => setIsEditModalOpen(true)}
@@ -338,7 +340,7 @@ const StudentProfile = () => {
                   Edit Profile
                 </button>
                 <button
-                  onClick={() => setIsEditModalOpen(true)}
+                  onClick={handleLogout}
                   className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
                 >
                   Logout
@@ -349,41 +351,51 @@ const StudentProfile = () => {
 
           {/* Information Cards */}
           <div className="col-span-1 md:col-span-2 space-y-4 md:space-y-6">
-            <Card className="bg-white shadow-lg rounded-xl p-6">
-              <h3 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">
-                General Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.entries(studentInfo.generalInfo).map(([key, value]) => (
-                  <div key={key} className="border-b border-gray-100 py-2">
-                    <div className="flex justify-between items-center">
-                      <span className="capitalize font-medium text-gray-600">{key}</span>
-                      <span className="text-gray-800">: {value}</span>
+            <Card className="bg-white shadow-lg rounded-xl">
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">
+                  General Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    ['Roll Number', studentInfo?.rollno],
+                    ['Email', studentInfo?.email],
+                    ['Branch', studentInfo?.branch],
+                    ['Type', studentInfo?.type],
+                    ['Academic Year', studentInfo?.year]
+                  ].map(([key, value]) => (
+                    <div key={key} className="border-b border-gray-100 py-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium text-gray-600">{key}</span>
+                        <span className="text-gray-800">: {value || 'N/A'}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </Card>
 
-            <Card className="bg-white shadow-lg rounded-xl p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link to="/complaints" className="w-full">
-                  <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
-                    Complaints
-                  </button>
-                </Link>
-                
-                <Link to="/leave-application" className="w-full">
-                  <button className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
-                    Leave Application
-                  </button>
-                </Link>
-                
-                <Link to="/condidate-election-form" className="w-full md:col-span-2">
-                  <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
-                    Election Application
-                  </button>
-                </Link>
+            <Card className="bg-white shadow-lg rounded-xl">
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Link to="/complaints" className="w-full">
+                    <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                      Complaints
+                    </button>
+                  </Link>
+
+                  <Link to="/leave-application" className="w-full">
+                    <button className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                      Leave Application
+                    </button>
+                  </Link>
+
+                  <Link to="/condidate-election-form" className="w-full md:col-span-2">
+                    <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                      Election Application
+                    </button>
+                  </Link>
+                </div>
               </div>
             </Card>
           </div>
@@ -402,4 +414,4 @@ const StudentProfile = () => {
   );
 };
 
-export default StudentProfile;
+export default ProfilePage;

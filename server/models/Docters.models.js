@@ -36,3 +36,5 @@ const docterSchema = new mongoose.Schema({
 },{timestamps: true});
 
 const Docter = mongoose.model('Docter', docterSchema);
+
+export default Docter;

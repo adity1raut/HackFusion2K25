@@ -1,7 +1,8 @@
 
 import mongoose from 'mongoose';
 
-const ComplentsSchema = mongoose.Schema({
+// First, fix the model name
+const ComplaintsSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -22,9 +23,20 @@ const ComplentsSchema = mongoose.Schema({
         type: String,
         enum: ['unread', 'approved', 'rejected'],
         default: 'unread'
+    },
+    statusUpdatedAt: {
+        type: Date
+    },
+    statusUpdatedBy: {
+        type: String
+    },
+    remarks: {
+        type: String
     }
 }, {
     timestamps: true
 });
 
-export default mongoose.model('Complents', ComplentsSchema);
+const Complaints = mongoose.model('Complaints', ComplaintsSchema)
+
+export default Complaints;

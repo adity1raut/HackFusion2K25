@@ -73,7 +73,7 @@ const DoctorAppointmentForm = () => {
                     Doctor Appointment System
                 </h1>
 
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col items-center justify-center gap-8">
                     {/* Form Section */}
                     <div className="lg:w-1/3">
                         <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 sticky top-8 border border-gray-100">

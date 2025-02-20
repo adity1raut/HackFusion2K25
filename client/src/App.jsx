@@ -11,7 +11,6 @@ import LeaveApplicationForm from './components/Forms/LeaveApplicationForm';
 import DoctorAppointmentForm from './components/Other/DoctorAppointmentForm';
 import FacultyAvailabilityForm from './components/Other/FacultyAvailabilityForm';
 import ElectionData from './components/Other/ElectionData';
-import FacultyProfile from './pages/Main/FalcultyProfile';
 import StudentSignUp from "./pages/Forms/StudentSignUp"
 import GroundBooking from './components/Forms/GroundBooking';
 import CandidateElectionForm from './components/Forms/ElectionRegistation';
@@ -22,6 +21,9 @@ import SignUpPage from './pages/Main/SignUpPage';
 import AdmiLogin from './pages/Forms/AdmiLogin';
 import LoginForm from './pages/Forms/StudentLogin';
 import FacultyLogin from './pages/Forms/FacultyLogin';
+import AdminBookingDashboard from './components/Admin/AdminBookingDashboard';
+import AdminComplaintsDashboard from './components/Admin/AdminComplaintsDashboard';
+import AdminLeaveDashboard from './components/Admin/AdminLeaveDashboard';
 
 
 function App() {
@@ -41,9 +43,10 @@ function App() {
               <Route path="/login/student" element={<LoginForm />} />
               <Route path="/login/admin" element={<AdmiLogin />} />
               <Route path="/forgot-password" element={<ForgetPassFrom />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route element={<PrivateRoute />}>
+               <Route path='/admin' element = {<AdminBookingDashboard/>}/>
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path='/falculty/profile' element={<FacultyProfile />} />
                 <Route path="/election" element={<ElectionData />} />
                 <Route path="/complaints" element={<ComplaintsForm />} />
                 <Route path="/leave-application" element={<LeaveApplicationForm />} />
@@ -52,6 +55,8 @@ function App() {
                 <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
                 <Route path="/condidate-election-form" element={<CandidateElectionForm />} />
                 <Route path="/bookings/details/:name" element={<VenueDetails/>}/>
+                <Route path='/admin/complaints' element={<AdminComplaintsDashboard />} />
+                <Route path='/admin/leave' element={<AdminLeaveDashboard/>} />
               </Route>
             </Routes>
           </div>

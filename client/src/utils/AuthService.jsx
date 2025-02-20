@@ -6,7 +6,7 @@ axios.defaults.baseURL = 'http://localhost:4000';
 const AuthService = {
     login: async (email, rollno, password) => {
         try {
-            const response = await axios.post('/api/login', {
+            const response = await axios.post('/api/student/login', {
                 email,
                 rollNumber: rollno,
                 password
