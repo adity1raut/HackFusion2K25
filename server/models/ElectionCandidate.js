@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const VALID_YEARS = ["second", "third", "last"];
-const VALID_BRANCHES = ["CSE", "EXTC", "IT", "Prod", "Mech", "Text", "Civil", "Elect", "Instru", "Chem"];
-const VALID_POSITIONS = ["techsecretary", "gensecretary", "sportsecretary", "cultusecretary", "girlsrepresentative"];
+const VALID_BRANCHES = ["CSE", "EXTC", "IT", "PROD", "MECH", "TEXT", "CIVIL", "ELECT", "INSTRU", "CHEM"];
+const VALID_POSITIONS = ["Technical Secretary", "General Secretary", "Sport Secretary", "Cultural Secretary", "Girls Representative"];
 const VALID_STATUSES = ["pending", "approved", "rejected"];
 
 const ElectionCandidateSchema = new mongoose.Schema({
@@ -64,6 +64,11 @@ const ElectionCandidateSchema = new mongoose.Schema({
       message: "{VALUE} is not a valid status"
     },
     default: "pending"
+  },
+  votes: {
+    type: Number,
+    default: 0
+  
   }
 }, { 
   timestamps: true 

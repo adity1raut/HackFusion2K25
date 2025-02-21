@@ -3,19 +3,20 @@ import multer from "multer";
 import dotenv from "dotenv";
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs/promises';
-import ElectionCandidate, { validationConstants } from "../../models/ElectionCandidate.js"
+import ElectionCandidate, { validationConstants } from "../../models/ElectionCandidate.js";
 
 dotenv.config();
 
 const router = express.Router();
 
+// Cloudinary Configuration
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Multer configuration
+// Multer Configuration
 const storage = multer.diskStorage({
     destination: 'uploads/',
     filename: (req, file, cb) => {
@@ -29,7 +30,7 @@ const fileFilter = (req, file, cb) => {
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only JPEG, PNG and JPG are allowed.'), false);
+        cb(new Error('Invalid file type. Only JPEG, PNG, and JPG are allowed.'), false);
     }
 };
 
@@ -41,49 +42,95 @@ const upload = multer({
     }
 });
 
-// Validation middleware
-const validateCandidateInput = (req, res, next) => {
-    const { name, email, regNo, year, branch, position } = req.body;
-    
-    // Check for required fields
-    if (!name || !email || !regNo || !year || !branch || !position) {
-        return res.status(400).json({ error: 'All fields are required' });
-    }
-    
-    // Validate year
-    if (!validationConstants.VALID_YEARS.includes(year)) {
-        return res.status(400).json({ error: 'Invalid academic year' });
-    }
-
-    // Validate branch
-    if (!validationConstants.VALID_BRANCHES.includes(branch)) {
-        return res.status(400).json({ error: 'Invalid branch' });
-    }
-
-    // Validate position
-    if (!validationConstants.VALID_POSITIONS.includes(position)) {
-        return res.status(400).json({ error: 'Invalid position' });
-    }
-
-    next();
-};
-
-// Helper function to upload file to Cloudinary
+// Helper Function to Upload File to Cloudinary
 const uploadToCloudinary = async (file, folder) => {
     try {
         const result = await cloudinary.uploader.upload(file.path, {
             folder: `electionForms/${folder}`,
             public_id: `${Date.now()}-${file.originalname}`,
         });
-        await fs.unlink(file.path);
+        await fs.unlink(file.path); // Delete the file from the server after upload
         return result.secure_url;
     } catch (error) {
-        await fs.unlink(file.path);
+        await fs.unlink(file.path); // Clean up the file if upload fails
         throw new Error(`Failed to upload ${folder}: ${error.message}`);
     }
 };
 
-// Create new candidate route
+// Validation Middleware
+const validateCandidateInput = (req, res, next) => {
+    const { name, email, regNo, year, branch, position } = req.body;
+
+    // Check for required fields
+    const requiredFields = { name, email, regNo, year, branch, position };
+    const missingFields = Object.entries(requiredFields)
+        .filter(([_, value]) => !value)
+        .map(([field]) => field);
+
+    if (missingFields.length > 0) {
+        return res.status(400).json({
+            success: false,
+            error: {
+                code: 400,
+                message: `Missing required fields: ${missingFields.join(', ')}`,
+                type: 'ValidationError'
+            }
+        });
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({
+            success: false,
+            error: {
+                code: 400,
+                message: 'Please enter a valid email',
+                type: 'ValidationError'
+            }
+        });
+    }
+
+    // Validate year (case-insensitive)
+    if (!validationConstants.VALID_YEARS.includes(year.toLowerCase())) {
+        return res.status(400).json({
+            success: false,
+            error: {
+                code: 400,
+                message: `Invalid academic year. Must be one of: ${validationConstants.VALID_YEARS.join(', ')}`,
+                type: 'ValidationError'
+            }
+        });
+    }
+
+    // Validate branch (case-sensitive)
+    if (!validationConstants.VALID_BRANCHES.includes(branch)) {
+        return res.status(400).json({
+            success: false,
+            error: {
+                code: 400,
+                message: `Invalid branch. Must be one of: ${validationConstants.VALID_BRANCHES.join(', ')}`,
+                type: 'ValidationError'
+            }
+        });
+    }
+
+    // Validate position (exact match)
+    if (!validationConstants.VALID_POSITIONS.includes(position)) {
+        return res.status(400).json({
+            success: false,
+            error: {
+                code: 400,
+                message: `Invalid position. Must be one of: ${validationConstants.VALID_POSITIONS.join(', ')}`,
+                type: 'ValidationError'
+            }
+        });
+    }
+
+    next();
+};
+
+// Route to Submit Candidate
 router.post(
     '/api/candidates/submit',
     upload.fields([
@@ -96,18 +143,22 @@ router.post(
         const files = req.files;
 
         try {
-            // Validate file uploads
-            if (!files.scoreCard?.[0] || !files.profileImage?.[0]) {
+            // Validate files
+            if (!files || !files.scoreCard || !files.profileImage) {
                 throw new Error('Both scoreCard and profileImage are required');
             }
 
-            // Check if candidate already exists
+            // Check for existing candidate
             const existingCandidate = await ElectionCandidate.findOne({
-                $or: [{ email }, { regNo }]
+                $or: [
+                    { email: email.toLowerCase() },
+                    { regNo: regNo.toUpperCase() }
+                ]
             });
 
             if (existingCandidate) {
-                throw new Error('A candidate with this email or registration number already exists');
+                const duplicateField = existingCandidate.email === email.toLowerCase() ? 'email' : 'registration number';
+                throw new Error(`A candidate with this ${duplicateField} already exists`);
             }
 
             // Upload files to Cloudinary
@@ -116,56 +167,109 @@ router.post(
                 uploadToCloudinary(files.profileImage[0], 'profiles')
             ]);
 
-            // Create and save new candidate
-            const newCandidate = new ElectionCandidate({
-                name,
-                email,
-                regNo,
-                year,
-                branch,
-                position,
+            // Create new candidate
+            const candidateData = {
+                name: name.trim(),
+                email: email.toLowerCase(),
+                regNo: regNo.toUpperCase(),
+                year: year.toLowerCase(),
+                branch: branch,
+                position: position,
                 scorecard: scoreCardUrl,
-                image: profileImageUrl
-            });
+                image: profileImageUrl,
+                status: 'pending',
+                votes: 0
+            };
 
+            const newCandidate = new ElectionCandidate(candidateData);
             const savedCandidate = await newCandidate.save();
-            
+
+            // Success response
             res.status(201).json({
+                success: true,
                 message: 'Candidate submission successful',
-                candidate: savedCandidate
+                data: savedCandidate
             });
 
         } catch (error) {
-            // Clean up any uploaded files
+            // Clean up uploaded files on error
             if (files) {
                 await Promise.all(
-                    Object.values(files).flat().map(file => 
-                        fs.unlink(file.path).catch(console.error)
-                    )
+                    Object.values(files).flat().map(file =>
+                        fs.unlink(file.path).catch(err =>
+                            console.error(`Failed to delete file ${file.path}:`, err)
+                    ))
                 );
             }
 
-            res.status(error.code === 11000 ? 409 : 500).json({
-                error: 'Candidate submission failed',
-                message: error.message
+            // Error response
+            const statusCode = error.code === 11000 ? 409 :
+                error.message.includes('required') ? 400 :
+                error.message.includes('validation') ? 422 : 500;
+
+            res.status(statusCode).json({
+                success: false,
+                error: {
+                    code: statusCode,
+                    message: error.message,
+                    type: statusCode === 409 ? 'DuplicateEntry' :
+                        statusCode === 400 ? 'ValidationError' :
+                        statusCode === 422 ? 'ProcessingError' : 'ServerError'
+                }
             });
         }
     }
 );
 
-// Get all candidates route
-router.get('/api/candidates', async (req, res) => {
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch((err) => {
+        next(err);
+    });
+};
+
+router.get('/api/candidates/selected', asyncHandler(async (req, res, next) => {
+    const approvedCandidates = await ElectionCandidate.find({
+        status: "approved"
+    }).select('-__v');
+
+    if (!approvedCandidates.length) {
+        return res.status(404).json({
+            success: false,
+            message: "No approved candidates found"
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        count: approvedCandidates.length,
+        data: approvedCandidates
+    });
+}));
+
+// Get all candidates route// GET all election candidates with pagination
+router.get('/api/candidates/selected', async (req, res) => {
+    const { page = 1, limit = 10 } = req.query; // Default values for page and limit
+    const options = {
+        page: Number(page),
+        limit: Number(limit)
+    };
+
     try {
         const candidates = await ElectionCandidate.find()
-            .select('-__v')
-            .sort({ createdAt: -1 });
-        
-        res.status(200).json(candidates);
-    } catch (error) {
-        res.status(500).json({
-            error: 'Failed to fetch candidates',
-            message: error.message
+            .skip((options.page - 1) * options.limit)
+            .limit(options.limit);
+
+        const totalCount = await ElectionCandidate.countDocuments();
+
+        res.status(200).json({
+            success: true,
+            data: candidates,
+            count: totalCount,
+            totalPages: Math.ceil(totalCount / options.limit)
         });
+    } catch (error) {
+        console.error("Error fetching candidates:", error);
+        res.status(500).json({ success: false, message: "Failed to retrieve candidates" });
     }
 });
 
@@ -174,11 +278,11 @@ router.get('/api/candidates/:id', async (req, res) => {
     try {
         const candidate = await ElectionCandidate.findById(req.params.id)
             .select('-__v');
-        
+
         if (!candidate) {
             return res.status(404).json({ error: 'Candidate not found' });
         }
-        
+
         res.status(200).json(candidate);
     } catch (error) {
         res.status(500).json({
@@ -199,32 +303,32 @@ const deleteFromCloudinary = async (url) => {
 // Admin route to update candidate status with remarks
 router.patch('/api/admin/candidates/:id/status', async (req, res) => {
     const { status, remarks } = req.body;
-    
+
     if (!validationConstants.VALID_STATUSES.includes(status)) {
-        return res.status(400).json({ 
+        return res.status(400).json({
             success: false,
-            error: 'Invalid status' 
+            error: 'Invalid status'
         });
     }
-    
+
     try {
         const candidate = await ElectionCandidate.findByIdAndUpdate(
             req.params.id,
-            { 
+            {
                 status,
                 remarks: remarks || '',
                 reviewedAt: new Date()
             },
             { new: true, runValidators: true }
         );
-        
+
         if (!candidate) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                error: 'Candidate not found' 
+                error: 'Candidate not found'
             });
         }
-        
+
         res.status(200).json({
             success: true,
             message: `Candidate status updated to ${status}`,
@@ -243,11 +347,11 @@ router.patch('/api/admin/candidates/:id/status', async (req, res) => {
 router.delete('/api/admin/candidates/:id', async (req, res) => {
     try {
         const candidate = await ElectionCandidate.findById(req.params.id);
-        
+
         if (!candidate) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                error: 'Candidate not found' 
+                error: 'Candidate not found'
             });
         }
 
@@ -259,7 +363,7 @@ router.delete('/api/admin/candidates/:id', async (req, res) => {
 
         // Delete candidate from database
         await ElectionCandidate.findByIdAndDelete(req.params.id);
-        
+
         res.status(200).json({
             success: true,
             message: 'Candidate deleted successfully'
@@ -274,7 +378,7 @@ router.delete('/api/admin/candidates/:id', async (req, res) => {
 });
 
 // Admin route to update candidate registration
-router.put('/api/admin/candidates/:id', 
+router.put('/api/admin/candidates/:id',
     upload.fields([
         { name: 'scoreCard', maxCount: 1 },
         { name: 'profileImage', maxCount: 1 }
@@ -308,7 +412,7 @@ router.put('/api/admin/candidates/:id',
                 await deleteFromCloudinary(existingCandidate.scorecard);
                 updateData.scorecard = scoreCardUrl;
             }
-            
+
             if (files.profileImage?.[0]) {
                 const profileImageUrl = await uploadToCloudinary(files.profileImage[0], 'profiles');
                 await deleteFromCloudinary(existingCandidate.image);
@@ -331,7 +435,7 @@ router.put('/api/admin/candidates/:id',
             // Clean up any uploaded files
             if (req.files) {
                 await Promise.all(
-                    Object.values(req.files).flat().map(file => 
+                    Object.values(req.files).flat().map(file =>
                         fs.unlink(file.path).catch(console.error)
                     )
                 );
@@ -350,15 +454,15 @@ router.put('/api/admin/candidates/:id',
 router.get('/api/admin/candidates', async (req, res) => {
     try {
         const { status, year, branch, position, search } = req.query;
-        
+
         // Build filter object
         const filter = {};
-        
+
         if (status) filter.status = status;
         if (year) filter.year = year;
         if (branch) filter.branch = branch;
         if (position) filter.position = position;
-        
+
         if (search) {
             filter.$or = [
                 { name: { $regex: search, $options: 'i' } },
@@ -370,7 +474,7 @@ router.get('/api/admin/candidates', async (req, res) => {
         const candidates = await ElectionCandidate.find(filter)
             .select('-__v')
             .sort({ createdAt: -1 });
-        
+
         res.status(200).json({
             success: true,
             count: candidates.length,
@@ -382,6 +486,19 @@ router.get('/api/admin/candidates', async (req, res) => {
             error: 'Failed to fetch candidates',
             message: error.message
         });
+    }
+});
+
+router.get("/api/election-candidates", async (req, res) => {
+    try {
+        const candidates = await ElectionCandidate.find(); // Fetch all candidates
+        if (candidates.length === 0) {
+            return res.status(404).json({ message: "No candidates found" });
+        }
+        res.status(200).json(candidates); // Return all candidates
+    } catch (error) {
+        console.error("Error fetching candidates:", error);
+        res.status(500).json({ message: "Failed to fetch candidates" });
     }
 });
 

@@ -10,7 +10,10 @@ import useElectionCandidate from "./routes/Election/ElectionRegistatonRoute.js"
 import useBooking  from "./routes/BookingRoute.js"
 import useFacultySignup from "./routes/Faculty/FacultySignRoute.js"
 import useFacultyLogin from "./routes/Faculty/FacultyLogin.js"
+import usefacultyAvaibility from "./routes/Faculty/FacultyRoute.js"
 import useLeave from "./routes/LeavRoute.js"
+import useVotingRoute from "./routes/Election/VotingRoute.js"
+import useCheating from "./routes/CheatingRoute/CheatingRoute.js"
 import env from 'dotenv';
 import cors from "cors";
 
@@ -37,6 +40,9 @@ app.use(useBooking)
 app.use(useFacultySignup)
 app.use(useLeave)
 app.use(useFacultyLogin)
+app.use(usefacultyAvaibility)
+app.use(useVotingRoute)
+app.use(useCheating)
 
 
 const PORT = 4000 ;

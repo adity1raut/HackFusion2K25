@@ -72,7 +72,7 @@ const Navbar = () => {
     };
 
     return (
-        <div className="fixed top-0 z-50 w-full bg-gradient-to-r from-cyan-500/10 to-green-500/10 backdrop-blur-sm shadow-lg">
+        <div className="fixed top-0 z-50 w-full bg-gradient-to-r  to-blue-600 to-blue-600 shadow-lg">
             <nav className="container mx-auto px-4 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}

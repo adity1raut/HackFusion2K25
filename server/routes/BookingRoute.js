@@ -154,6 +154,20 @@ const validateStatusUpdate = [
     .withMessage("Admin message must not exceed 500 characters")
 ];
 
+// Get all bookings
+router.get("/api/bookings/data", async (req, res) => {
+  try {
+    const bookings = await Booking.find(); // Fetch all bookings
+    if (bookings.length === 0) {
+      return res.status(404).json({ message: "No bookings found" });
+    }
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({ message: "Failed to fetch bookings" });
+  }
+});
+
 // Update booking status route
 router.patch("/api/admin/booking/:id/status", validateStatusUpdate, async (req, res) => {
   try {

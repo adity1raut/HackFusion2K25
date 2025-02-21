@@ -1,118 +1,140 @@
+import React, { useState, useEffect } from 'react';
+import { User, Mail, BookOpen, Clock, AlertCircle, Award, RefreshCcw, Image, ChevronDown } from 'lucide-react';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useState , React } from 'react';
-import { toast } from 'react-toastify';
-
+// Function to get status color and icon
+const getStatusDetails = (status) => {
+  switch (status) {
+    case "pending":
+      return { color: "bg-yellow-500", icon: <AlertCircle size={16} /> };
+    case "approved":
+      return { color: "bg-green-500", icon: <Award size={16} /> };
+    case "rejected":
+      return { color: "bg-red-500", icon: <AlertCircle size={16} /> };
+    default:
+      return { color: "bg-gray-500", icon: <AlertCircle size={16} /> };
+  }
+};
 
 function ElectionCandidate() {
-      const [availabilities, setAvailabilities] = useState([]);
-      const [page, setPage] = useState(1);
-      const [totalPages, setTotalPages] = useState(1);
-    
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            setLoading(true);
-            const response = await fetch(`/api/candidate-list?page=${page}`, {
-              credentials: 'include'
-            });
-            
-            if (!response.ok) {
-              throw new Error('Failed to fetch data');
-            }
-            
-            const data = await response.json();
-            setAvailabilities(data.availabilities);
-            setTotalPages(data.totalPages);
-          } catch (err) {
-            toast.error('Failed to load faculty availabilities. Please try again later.');
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        fetchData();
-      }, [page]);
-    
-  return (
-    <div>
-       <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">
-           Election candidate
-          </h2>
+  const [candidates, setCandidates] = useState([]); // Store all candidates
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Department
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Post
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Image
-                  </th>
-                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acadamic Yera
-                  </th> */}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {availabilities.map((availability, index) => (
+  // Fetch candidates data from the API
+  const fetchCandidates = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch('http://localhost:4000/api/election-candidates'); // Adjust the URL if necessary
+      if (!response.ok) {
+        throw new Error('Failed to fetch candidates');
+      }
+      const data = await response.json();
+      setCandidates(data); // Set the fetched candidates
+    } catch (error) {
+      console.error('Error fetching candidates:', error);
+      setError('Failed to fetch candidates. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCandidates();
+  }, []);
+
+  // Filter candidates to only include approved ones
+  const filteredCandidates = candidates.filter((candidate) => candidate.status === "approved");
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading candidates...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+        <div className="text-center text-red-600">
+          <p>{error}</p>
+          <button
+            onClick={fetchCandidates}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 mx-auto"
+          >
+            <RefreshCcw size={16} />
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-center bg-gray-100 p-4">
+      <div className="w-full max-w-5xl space-y-6">
+        {/* Table for Approved Candidates */}
+        <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredCandidates.map((candidate, index) => {
+                const statusDetails = getStatusDetails(candidate.status);
+                return (
                   <tr key={index} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                      <div>{availability.name}</div>
-                      <div className="text-xs text-gray-500">{availability.designation}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {availability.department}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {availability.dayOfWeek}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {availability.availableTimeSlots.map((slot, index) => (
-                        <div key={index}>{slot.start} - {slot.end}</div>
-                      ))}
+                    {/* Name */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{candidate.name}</td>
+
+                    {/* Email */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{candidate.email}</td>
+
+                    {/* Branch */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{candidate.branch}</td>
+
+                    {/* Year */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{candidate.year}</td>
+
+                    {/* Position */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{candidate.position}</td>
+
+                    {/* Image */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-200">
+                        {candidate.image ? (
+                          <img
+                            src={candidate.image}
+                            alt={candidate.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-purple-100">
+                            <Image className="text-purple-500" size={20} />
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="flex justify-between items-center mt-8">
-            <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page === 1 || loading}
-              className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Previous
-            </button>
-
-            <div className="text-gray-600">
-              Page {page} of {totalPages}
-            </div>
-
-            <button
-              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={page === totalPages || loading}
-              className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </button>
-          </div>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-
+      </div> 
     </div>
-  )
+  );
 }
 
-export default ElectionCandidate
+export default ElectionCandidate;
