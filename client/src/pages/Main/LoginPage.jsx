@@ -48,7 +48,7 @@ const LoginPortal = () => {
           {/* Faculty Portal */}
           <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 flex flex-col">
             <div className="mb-4 flex justify-center">
-              <BookOpen className="h-12 w-12 text-green-500" />
+              <BookOpen className="h-12 w-12 text-blue-500" />
             </div>
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Faculty Portal</h2>
             <p className="text-gray-600 mb-4 flex-grow">
@@ -56,7 +56,7 @@ const LoginPortal = () => {
             </p>
             <button 
               onClick={handleFacultyLogin}
-              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition-colors duration-300"
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
             >
               Faculty Login →
             </button>
@@ -65,7 +65,7 @@ const LoginPortal = () => {
           {/* Admin Portal */}
           <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 flex flex-col">
             <div className="mb-4 flex justify-center">
-              <ShieldCheck className="h-12 w-12 text-purple-500" />
+              <ShieldCheck className="h-12 w-12 text-blue-500" />
             </div>
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Admin Portal</h2>
             <p className="text-gray-600 mb-4 flex-grow">
@@ -73,9 +73,39 @@ const LoginPortal = () => {
             </p>
             <button 
               onClick={handleAdminLogin}
-              className="w-full bg-purple-500 text-white py-2 rounded-md hover:bg-purple-600 transition-colors duration-300"
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
             >
               Admin Login →
+            </button>
+          </div>
+          <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 flex flex-col">
+            <div className="mb-4 flex justify-center">
+              <ShieldCheck className="h-12 w-12 text-blue-500" />
+            </div>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800"> Secretary Portal</h2>
+            <p className="text-gray-600 mb-4 flex-grow">
+              Manage user accounts, configure settings, and monitor performance.
+            </p>
+            <button 
+              onClick={handleAdminLogin}
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              Secretary Login →
+            </button>
+          </div>
+          <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 flex flex-col">
+            <div className="mb-4 flex justify-center">
+              <ShieldCheck className="h-12 w-12 text-blue-500" />
+            </div>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">Club Portal</h2>
+            <p className="text-gray-600 mb-4 flex-grow">
+              Manage user accounts, configure settings, and monitor performance.
+            </p>
+            <button 
+              onClick={handleAdminLogin}
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              ClubLogin →
             </button>
           </div>
         </div>

@@ -44,7 +44,7 @@ const SignUpPage = () => {
           {/* Faculty Portal */}
           <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 flex flex-col items-center">
             <div className="mb-4">
-              <BookOpen className="h-12 w-12 text-green-500" />
+              <BookOpen className="h-12 w-12 text-blue-500" />
             </div>
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Faculty Portal</h2>
             <p className="text-gray-600 mb-4 text-center">
@@ -52,9 +52,40 @@ const SignUpPage = () => {
             </p>
             <button 
               onClick={handleFacultyLogin}
-              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition-colors duration-300"
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
             >
               Faculty Signin →
+            </button>
+          </div>
+          {/* club/secutery Portal */}
+          <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 flex flex-col items-center">
+            <div className="mb-4">
+              <BookOpen className="h-12 w-12 text-blue-500" />
+            </div>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800"> Club Portal</h2>
+            <p className="text-gray-600 mb-4 text-center">
+              Manage content, communicate with students, and access resources.
+            </p>
+            <button 
+              onClick={handleFacultyLogin}
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              Club Signin →
+            </button>
+          </div>
+          <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 flex flex-col items-center">
+            <div className="mb-4">
+              <BookOpen className="h-12 w-12 text-blue-500" />
+            </div>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800"> Secretary Portal</h2>
+            <p className="text-gray-600 mb-4 text-center">
+              Manage content, communicate with students, and access resources.
+            </p>
+            <button 
+              onClick={handleFacultyLogin}
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              secretary Signin →
             </button>
           </div>
         </div>

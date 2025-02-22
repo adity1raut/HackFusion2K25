@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin, MessageSquare, Phone, Mail, User } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,7 +6,7 @@ import GroundComponents from "../Other/GroundCopoants";
 
 const VENUES = ["Auditorium", "Classrooms", "Ground"];
 
-function GroundBooking() {
+const GroundBooking = () => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -18,8 +18,42 @@ function GroundBooking() {
         message: "",
         status: "pending"
     });
+    
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const email = localStorage.getItem('email');
+            if (!email) {
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:4000/api/user/${email}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const data = await response.json();
+                setUserData(data);
+                setFormData(prev => ({
+                    ...prev,
+                    name: data.name || '',
+                    email: data.email || ''
+                }));
+            } catch (error) {
+                toast.error("Failed to load user data");
+                console.error("Error fetching user data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const validateForm = () => {
         const newErrors = {};
@@ -27,29 +61,29 @@ function GroundBooking() {
         const startDate = new Date(formData.date);
         const endDate = new Date(formData.lastdate);
 
-        // Name validation
         if (!formData.name.trim()) {
             newErrors.name = "Name is required";
         } else if (formData.name.length < 2 || formData.name.length > 100) {
             newErrors.name = "Name must be between 2 and 100 characters";
         }
 
-        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-            newErrors.email = "Valid email is required";
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = "Please enter a valid email address";
         }
 
-        // Phone validation
         const phoneRegex = /^[\d-+() ]{10,15}$/;
-        if (!phoneRegex.test(formData.phone)) {
+        if (!formData.phone.trim()) {
+            newErrors.phone = "Phone number is required";
+        } else if (!phoneRegex.test(formData.phone)) {
             newErrors.phone = "Please enter a valid phone number";
         }
 
-        // Date validation
         if (!formData.date) {
             newErrors.date = "Start date is required";
-        } else if (startDate < today) {
+        } else if (startDate < today.setHours(0, 0, 0, 0)) {
             newErrors.date = "Start date cannot be in the past";
         }
 
@@ -57,22 +91,20 @@ function GroundBooking() {
             newErrors.lastdate = "End date must be after start date";
         }
 
-        // Time validation
-        const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-        if (!timeRegex.test(formData.time)) {
-            newErrors.time = "Please enter a valid time in HH:MM format";
+        if (!formData.time) {
+            newErrors.time = "Time is required";
         }
 
-        // Message validation
+        if (!formData.venue) {
+            newErrors.venue = "Please select a venue";
+        } else if (!VENUES.includes(formData.venue)) {
+            newErrors.venue = "Please select a valid venue";
+        }
+
         if (!formData.message.trim()) {
             newErrors.message = "Message is required";
         } else if (formData.message.length < 10 || formData.message.length > 500) {
             newErrors.message = "Message must be between 10 and 500 characters";
-        }
-
-        // Venue validation
-        if (!VENUES.includes(formData.venue)) {
-            newErrors.venue = "Please select a valid venue";
         }
 
         setErrors(newErrors);
@@ -81,11 +113,10 @@ function GroundBooking() {
 
     const handleChange = (e) => {
         const { id, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [id]: value,
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
         }));
-        // Clear error when field is modified
         if (errors[id]) {
             setErrors(prev => ({
                 ...prev,
@@ -98,7 +129,14 @@ function GroundBooking() {
         e.preventDefault();
         
         if (!validateForm()) {
-            toast.error("Please correct the errors in the form");
+            toast.error("Please correct the errors in the form", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true
+            });
             return;
         }
 
@@ -116,28 +154,65 @@ function GroundBooking() {
 
             if (!response.ok) {
                 if (response.status === 409) {
-                    toast.error("This venue is already booked for the selected date and time range");
+                    toast.error("This venue is already booked for the selected date and time range", {
+                        position: "top-right",
+                        autoClose: 5000
+                    });
                 } else if (data.errors) {
-                    // Handle validation errors from server
                     const serverErrors = {};
                     data.errors.forEach(error => {
                         serverErrors[error.param] = error.msg;
                     });
                     setErrors(serverErrors);
-                    toast.error("Please correct the errors in the form");
+                    toast.error("Please correct the errors in the form", {
+                        position: "top-right",
+                        autoClose: 3000
+                    });
                 } else {
                     throw new Error(data.message || 'Error creating booking');
                 }
                 return;
             }
 
-            toast.success("Booking created successfully!");
+            toast.success(
+                <div>
+                    <h4 className="font-bold">Booking Successful! 🎉</h4>
+                    <p>Venue: {formData.venue}</p>
+                    <p>Date: {new Date(formData.date).toLocaleDateString()}</p>
+                    <p>Time: {formData.time}</p>
+                </div>,
+                {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                }
+            );
+
             setFormData({
-                name: "", email: "", phone: "", venue: "",
-                date: "", lastdate: "", time: "", message: "", status: "pending"
+                name: "", 
+                email: "", 
+                phone: "", 
+                venue: "",
+                date: "", 
+                lastdate: "", 
+                time: "", 
+                message: "", 
+                status: "pending"
             });
         } catch (error) {
-            toast.error(error.message || "Error creating booking. Please try again.");
+            toast.error("Error creating booking. Please try again.", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true
+            });
+            console.error("Booking error:", error);
         } finally {
             setIsSubmitting(false);
         }
@@ -152,6 +227,14 @@ function GroundBooking() {
     
     const labelClassName = "block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2";
     const errorClassName = "text-red-500 text-sm mt-1";
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
@@ -182,6 +265,7 @@ function GroundBooking() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         required
+                                        readOnly
                                     />
                                     {errors.name && <p className={errorClassName}>{errors.name}</p>}
                                 </div>
@@ -198,6 +282,7 @@ function GroundBooking() {
                                         value={formData.email}
                                         onChange={handleChange}
                                         required
+                                        readOnly
                                     />
                                     {errors.email && <p className={errorClassName}>{errors.email}</p>}
                                 </div>
@@ -318,9 +403,20 @@ function GroundBooking() {
                     </div>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </div>
     );
-}
+};
 
 export default GroundBooking;

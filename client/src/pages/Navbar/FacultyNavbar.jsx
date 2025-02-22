@@ -2,9 +2,9 @@ import React, { useContext, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import AuthService from "../../utils/AuthService";
-import logo from "../../assets/sggs_logo-removebg-preview.png";
+import logo from "../../assets/logo.jpg";
 
-const Navbar = () => {
+const FacultyNavbar = () => {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -82,7 +82,7 @@ const Navbar = () => {
                         >
                             <img src={logo} alt="Logo" class="h-10 w-auto" />
                         </button>
-                        <h1 class="text-2xl ml-4 font-bold">XYZ College</h1>
+                        <h1 class="text-2xl ml-4 font-bold">Hamane Kiya College</h1>
 
                     </div>
 
@@ -97,7 +97,7 @@ const Navbar = () => {
                         ) : (
                             <>
                                 <NavButton path="/dashboard">Home</NavButton>
-                                <NavButton path="/profile">Profile</NavButton>
+                                <NavButton path="/faculty/profile">Profile</NavButton>
                                 <NavButton path="/election">Election</NavButton>
                                 <NavButton path="/bookings">Booking</NavButton>
                                 <NavButton path="/logout" isLogout={true}>Logout</NavButton>
@@ -135,7 +135,7 @@ const Navbar = () => {
                         ) : (
                             <>
                                 <NavButton path="/dashboard">Home</NavButton>
-                                <NavButton path="/profile">Profile</NavButton>
+                                <NavButton path="/faculty/profile">Profile</NavButton>
                                 <NavButton path="/election">Election</NavButton>
                                 <NavButton path="/bookings">Booking</NavButton>
                                 <NavButton path="/logout" isLogout={true}>Logout</NavButton>
@@ -148,4 +148,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default FacultyNavbar;

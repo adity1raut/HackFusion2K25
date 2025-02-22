@@ -209,8 +209,9 @@ const FacultyProfile = () => {
       const userDetails = AuthService.getUserDetails();
       console.log(userDetails);
       console.log(localStorage.getItem('email'));
+
       const token = localStorage.getItem('token');
-      const email = "work@sggs.ac.in";
+      const email =localStorage.getItem('email') ;
 
       console.log('Fetching profile' , email, token);
 
@@ -275,12 +276,6 @@ const FacultyProfile = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('email');
-    navigate('/login');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-cyan-500 to-green-500 p-8 flex items-center justify-center">
@@ -310,7 +305,7 @@ const FacultyProfile = () => {
     <div className="min-h-screen bg-gradient-to-r from-cyan-100 to-green-200 p-4 pt-24 md:p-8">
       <div className="max-w-5xl pt-20 mx-auto">
         <h1 className="text-3xl md:text-4xl text-purple-600 text-center font-bold mb-2">
-          Faculty Profile
+          {facultyInfo.type} Profile
         </h1>
         <br />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -334,12 +329,6 @@ const FacultyProfile = () => {
                 className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Edit Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="mt-4 w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Logout
               </button>
             </div>
           </Card>
@@ -365,11 +354,16 @@ const FacultyProfile = () => {
                     Update Availability
                   </button>
                 </Link>
-                <Link to="/manage-complaints">
+                <Link to="/faculty/cheating">
                   <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    Manage Complaints
+                    Cheating Report
                   </button>
                 </Link>
+                {/* <Link to="/leave-application">
+                  <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Leave Apllication
+                  </button>
+                </Link> */}
               </div>
             </Card>
           </div>

@@ -123,7 +123,7 @@ function ComplaintPage() {
                                 {/* Complaint Details */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* Name */}
-                                    <div className="flex items-center space-x-4">
+                                    {/* <div className="flex items-center space-x-4">
                                         <div className="p-3 bg-gray-100 rounded-full">
                                             <User className="text-purple-700" size={20} />
                                         </div>
@@ -131,10 +131,10 @@ function ComplaintPage() {
                                             <p className="text-sm font-medium text-gray-500">Name</p>
                                             <p className="text-gray-900 font-semibold">{complaint.name}</p>
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     {/* Email */}
-                                    <div className="flex items-center space-x-4">
+                                    {/* <div className="flex items-center space-x-4">
                                         <div className="p-3 bg-gray-100 rounded-full">
                                             <Mail className="text-purple-700" size={20} />
                                         </div>
@@ -142,7 +142,7 @@ function ComplaintPage() {
                                             <p className="text-sm font-medium text-gray-500">Email</p>
                                             <p className="text-gray-900 font-semibold">{complaint.email}</p>
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     {/* Subject */}
                                     <div className="flex items-center space-x-4">

@@ -19,6 +19,7 @@ const CheatingReports = () => {
     email: '',
     reportedBy: '',
     proof: null,
+    action: '',
   });
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -60,6 +61,7 @@ const CheatingReports = () => {
         email: '',
         reportedBy: '',
         proof: null,
+        action: '',
       });
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
@@ -141,6 +143,22 @@ const CheatingReports = () => {
             />
           </div>
 
+          <div className="relative">
+            <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <select
+              name="action"
+              value={formData.action}
+              onChange={handleInputChange}
+              required
+              className="w-full pl-10 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select an action</option>
+              <option value="Exam Performance Cancellation(EPC)">Exam Performance Cancellation (EPC)</option>
+              <option value="Subject Performance Cancellation(SPC)">Subject Performance Cancellation (SPC)</option>
+              <option value="Whole Performance Cancellation(WPC)">Whole Performance Cancellation (WPC)</option>
+            </select>
+          </div>
+
           <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
             <FileImage className="h-5 w-5 text-gray-500" />
             <input
@@ -163,7 +181,7 @@ const CheatingReports = () => {
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Submitting...
               </>
-            ) : (
+            ) : ( 
               <>
                 <Send className="h-5 w-5" />
                 Submit Report

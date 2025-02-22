@@ -2,13 +2,12 @@ import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from "../src/context/AuthContext";
 import PrivateRoute from '../src/utils/PrivateRoute'
-import ProfilePage from './pages/Main/ProfilePage'
 import Navbar from './pages/Navbar/Navbar'
 import Dhasboard from './pages/Main/Dhasboard';
 import ForgetPassFrom from './pages/Forms/ForgetPassFrom';
 import ComplaintsForm from "./components/Forms/ComplaintsForm";
 import LeaveApplicationForm from './components/Forms/LeaveApplicationForm';
-import DoctorAppointmentForm from './components/Doctor/DoctorAppointmentForm';
+import DoctorAppointmentForm from './components/Other/DoctorAppointmentForm';
 import FacultyAvailabilityForm from './components/Other/FacultyAvailabilityForm';
 import ElectionData from './components/Other/ElectionData';
 import StudentSignUp from "./pages/Forms/StudentSignUp"
@@ -21,30 +20,24 @@ import SignUpPage from './pages/Main/SignUpPage';
 import AdmiLogin from './pages/Forms/AdmiLogin';
 import LoginForm from './pages/Forms/StudentLogin';
 import FacultyLogin from './pages/Forms/FacultyLogin';
-import AdminBookingDashboard from './components/Admin/AdminBookingDashboard';
-import AdminComplaintsDashboard from './components/Admin/AdminComplaintsDashboard';
-import AdminLeaveDashboard from './components/Admin/AdminLeaveDashboard';
 import FacultyProfile from "./pages/Main/FalcultyProfile"
-import AdminElectionDashboard from './components/Admin/AdminElectionDashboard';
 import Footer from './pages/Main/Footer';
 import ElectionDetailsst from './StudentDashBord/ElectionDetailsst';
 import LeaveApplication from './StudentDashBord/LeavApllication';
 import ComplaintPage from './StudentDashBord/ComplaintsPage';
 import BookingCard from './StudentDashBord/VenueBooking';
 import FacultyBook from './StudentDashBord/FacultyBook'; 
-import AdmiDhashbordPage from "./AdminDhasBord/AdmiDhashbordPage"
 import CheatingReports from "./components/Forms/CheatingFrom"
 import CheatingStudent from "./StudentDashBord/CheatingStudent"
-import StudentAppoiment from './components/Doctor/StudentAppoiment';
-import DoctorDashboard from './components/Doctor/DoctorDashboard';
+import FacultyNavbar from "./pages/Navbar/FacultyNavbar"
 
-function App() {
+function Faculty() {
   return (
     <div>
       <AuthProvider>
         <BrowserRouter>
           <div className='min-h-screen'>
-            <Navbar />
+            <FacultyNavbar />
             <Routes>
               {/* <Route path="/" element={<Dhasboard />} /> */}
               <Route path="/signin" element={<SignUpPage />} />
@@ -55,7 +48,6 @@ function App() {
               <Route path="/login/student" element={<LoginForm />} />
               <Route path="/login/admin" element={<AdmiLogin />} />
               <Route path="/forgot-password" element={<ForgetPassFrom />} />
-              <Route path="/profile" element={<ProfilePage />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/dashboard" element={<Dhasboard />} />
                 <Route path='/dashboard/booking-details' element={<BookingCard />} />
@@ -64,7 +56,7 @@ function App() {
                 <Route path='/dashboard/faculty-details' element={<FacultyBook/>} />
                 <Route path='/dashboard/election-details' element={<ElectionDetailsst />} />
                 <Route path='/dashboard/cheating-details' element={<CheatingStudent />} />
-                <Route path="/profile" element={<ProfilePage />} />
+
                 <Route path="/election" element={<ElectionData />} />
                 <Route path="/complaints" element={<ComplaintsForm />} />
                 <Route path="/leave-application" element={<LeaveApplicationForm />} />
@@ -74,14 +66,7 @@ function App() {
                 <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
                 <Route path="/condidate-election-form" element={<CandidateElectionForm />} />
                 <Route path="/bookings/details/:name" element={<VenueDetails />} />
-                <Route path='/admin/dashboard/' element={<AdmiDhashbordPage />} />
-                <Route path='/admin/dashboard/complaints' element={<AdminComplaintsDashboard />} />
-                <Route path='/admin/dashboard/leaves' element={<AdminLeaveDashboard />} />
-                <Route path='/admin/dashboard/election' element={<AdminElectionDashboard />} />
-                <Route path='/admin/dashboard/booking' element={<AdminBookingDashboard />} />
                 <Route path='/faculty/cheating' element={<CheatingReports />} />
-                <Route path='/student/appointment' element={<StudentAppoiment/>} />
-                <Route path='/student/doctor' element={<DoctorDashboard />} />
               </Route>
             </Routes>
           </div>
@@ -92,4 +77,4 @@ function App() {
   )
 }
 
-export default App
+export default Faculty ;
