@@ -18,13 +18,14 @@ const upload = multer({ storage });
 const router = express.Router();
 
 // POST route to submit a new cheating report
+// Route to create a new cheating report
 router.post('/api/cheating', upload.single('proof'), async (req, res) => {
   try {
-    const { name, reason, email, reportedBy } = req.body;
+    const { name, reason, email, reportedBy, action } = req.body;
 
     // Validate required fields
-    if (!name || !reason || !email || !reportedBy || !req.file) {
-      return res.status(400).json({ message: 'All fields are required, including proof image' });
+    if (!name || !reason || !email || !reportedBy || !req.file || !action) {
+      return res.status(400).json({ message: 'All fields are required, including proof image and action' });
     }
 
     // Upload the image to Cloudinary
@@ -56,6 +57,7 @@ router.post('/api/cheating', upload.single('proof'), async (req, res) => {
       email,
       proof: result.secure_url, // Store the Cloudinary URL
       reportedBy,
+      action, // Include action from request body
     });
 
     // Save the report to the database
@@ -67,7 +69,6 @@ router.post('/api/cheating', upload.single('proof'), async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 
 // GET route to fetch all cheating reports
 router.get('/api/cheating', async (req, res) => {

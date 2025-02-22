@@ -25,6 +25,11 @@ const cheatingSchema = new mongoose.Schema({
     required: true,
     maxLength: 100
   },
+  action :{
+    type: String,
+    enum: ['Exam Performance Cancellation(EPC)', 'Subject Performance Cancellation(SPC)', 'Whole Performance Cancellation(WPC)'],
+    default: 'pending'
+  } ,
   createdAt: {
     type: Date,
     default: Date.now

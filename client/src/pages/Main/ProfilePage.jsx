@@ -390,9 +390,14 @@ const ProfilePage = () => {
                     </button>
                   </Link>
 
-                  <Link to="/condidate-election-form" className="w-full md:col-span-2">
+                  <Link to="/condidate-election-form" className="w-full">
                     <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
                       Election Application
+                    </button>
+                  </Link>
+                  <Link to="/student/appointment" className="w-full">
+                    <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                      Doctor Appointment
                     </button>
                   </Link>
                 </div>
