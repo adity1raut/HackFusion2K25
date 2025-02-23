@@ -378,24 +378,24 @@ const ProfilePage = () => {
             <Card className="bg-white shadow-lg rounded-xl">
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Link to="/complaints" className="w-full">
+                  <Link to="/student/complaints" className="w-full">
                     <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
                       Complaints
                     </button>
                   </Link>
 
-                  <Link to="/leave-application" className="w-full">
+                  <Link to="/student/leave-application" className="w-full">
                     <button className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
                       Leave Application
                     </button>
                   </Link>
 
-                  <Link to="/condidate-election-form" className="w-full">
+                  <Link to="/student/election-form" className="w-full">
                     <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
                       Election Application
                     </button>
                   </Link>
-                  <Link to="/student/appointment" className="w-full">
+                  <Link to="/student/doctor/appointment" className="w-full">
                     <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
                       Doctor Appointment
                     </button>

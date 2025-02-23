@@ -15,6 +15,7 @@ import useLeave from "./routes/LeavRoute.js"
 import useVotingRoute from "./routes/Election/VotingRoute.js"
 import useCheating from "./routes/CheatingRoute/CheatingRoute.js"
 import useDoctorAppoint from "./routes/Doctor/DoctorAppointment.js"
+import useNoticeBord from "./routes/CheatingRoute/NoticeBord.js"
 import env from 'dotenv';
 import cors from "cors";
 
@@ -44,6 +45,8 @@ app.use(useFacultyLogin)
 app.use(usefacultyAvaibility)
 app.use(useVotingRoute)
 app.use(useCheating)
+
+app.use(useNoticeBord)
 app.use(useDoctorAppoint)
 
 

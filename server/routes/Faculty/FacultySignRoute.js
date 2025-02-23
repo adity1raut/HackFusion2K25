@@ -47,7 +47,7 @@ const validateFacultyInput = (data) => {
     }
     
     // Type validation
-    const validTypes = ['faculty', 'secretary', 'club'];
+    const validTypes = ['faculty', 'secretary', 'club' , "admin" , "doctor"];
     if (!data.type || !validTypes.includes(data.type)) {
         errors.type = 'Invalid account type';
     }

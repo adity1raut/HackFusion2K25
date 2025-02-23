@@ -1,11 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import AuthService from "../../utils/AuthService";
 import logo from "../../assets/sggs_logo-removebg-preview.png";
 
 const Navbar = () => {
-    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
@@ -14,6 +13,7 @@ const Navbar = () => {
     useEffect(() => {
         setActiveRoute(location.pathname);
         // Close mobile menu when route changes
+        console.log(localStorage.getItem("type"));
         setMenuOpen(false);
     }, [location]);
 
@@ -40,10 +40,10 @@ const Navbar = () => {
     };
 
     const handleLogout = () => {
-        AuthService.logout();
-        setIsAuthenticated(false);
+        logout();
+        localStorage.removeItem('type');
+        localStorage.removeItem('email');
         navigate("/login");
-        window.dispatchEvent(new Event("authChange"));
     };
 
     const NavButton = ({ path, children, className = "", isLogout = false }) => {
@@ -70,36 +70,79 @@ const Navbar = () => {
         );
     };
 
+    // Determine profile link and role based on user email and type
+    const isStudent = user?.email?.match(/^[0-9]{4}[a-zA-Z]{3}[0-9]{3}@sggs.ac.in$/);
+    const userType = localStorage.getItem("type"); // Assuming user object has a 'type' field
+
+    // Set profile link based on user type
+    const profileLink = userType === 'admin' 
+        ? '/admin/profile' 
+        : userType === 'doctor' 
+        ? '/doctor/profile' 
+        : isStudent 
+        ? '/student/profile' 
+        : '/faculty/profile';
+
+    // Condition to hide /dashboard for admin and doctor
+    const shouldShowDashboard = !['admin', 'doctor'].includes(userType);
+
     return (
-        <div className="fixed top-0 z-50 w-full bg-gradient-to-r  to-blue-600 to-blue-600 shadow-lg">
+        <div className="fixed top-0 z-50 w-full bg-gradient-to-br to-blue-700 to-blue-600 shadow-lg">
             <nav className="container mx-auto px-4 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
-                    <div class="flex flex-shrink-0 items-center">
+                    <div className="flex flex-shrink-0 items-center">
                         <button
-                            onClick={() => handleNavigation("/")}
-                            class="transition-transform duration-300 transform hover:scale-105"
+                            onClick={() => handleNavigation("/dashboard")}
+                            className="transition-transform duration-300 transform hover:scale-105"
                         >
-                            <img src={logo} alt="Logo" class="h-10 w-auto" />
+                            <img src={logo} alt="Logo" className="h-10 w-auto" />
                         </button>
-                        <h1 class="text-2xl ml-4 font-bold">XYZ College</h1>
-
+                        <h1 className="text-2xl ml-4 font-bold">XYZ College</h1>
                     </div>
 
                     <div className="hidden md:flex items-center space-x-1">
                         {!isAuthenticated ? (
                             <>
-                                {/* <NavButton path="/">Dashboard</NavButton> */}
                                 <NavButton path="/login">Login</NavButton>
                                 <NavButton path="/signin">Signup</NavButton>
                                 <NavButton path="/forgot-password">Forgot Password</NavButton>
                             </>
                         ) : (
                             <>
-                                <NavButton path="/dashboard">Home</NavButton>
-                                <NavButton path="/profile">Profile</NavButton>
-                                <NavButton path="/election">Election</NavButton>
-                                <NavButton path="/bookings">Booking</NavButton>
+                                {/* Common Links for All Authenticated Users */}
+                                {shouldShowDashboard && <NavButton path="/dashboard">Dashboard</NavButton>}
+                                <NavButton path={profileLink}>Profile</NavButton> {/* Dynamic Profile Link */}
+
+                                {/* Faculty-Specific Links */}
+                                {userType === 'faculty' && (
+                                    <>
+                                        <NavButton path="/bookings">Booking</NavButton> {/* Booking for Faculty */}
+                                    </>
+                                )}
+
+                                {/* Admin-Specific Links */}
+                                {userType === 'admin' && (
+                                    <>
+                                        <NavButton path="/admin-dashboard">Admin Dashboard</NavButton>
+                                    </>
+                                )}
+
+                                {/* Doctor-Specific Links */}
+                                {userType === 'doctor' && (
+                                    <>
+                                        <NavButton path="/doctor-appointments">Appointments</NavButton>
+                                    </>
+                                )}
+
+                                {/* Student-Specific Links */}
+                                {isStudent && (
+                                    <>
+                                        <NavButton  className="bg-blue-400" path="/election">Vote</NavButton>
+                                    </>
+                                )}
+
+                                {/* Logout Button */}
                                 <NavButton path="/logout" isLogout={true}>Logout</NavButton>
                             </>
                         )}
@@ -127,17 +170,46 @@ const Navbar = () => {
                     <div className="py-2 space-y-1 px-2">
                         {!isAuthenticated ? (
                             <>
-                                {/* <NavButton path="/">Dashboard</NavButton> */}
                                 <NavButton path="/login">Login</NavButton>
                                 <NavButton path="/signin">Signup</NavButton>
                                 <NavButton path="/forgot-password">Forgot Password</NavButton>
                             </>
                         ) : (
                             <>
-                                <NavButton path="/dashboard">Home</NavButton>
-                                <NavButton path="/profile">Profile</NavButton>
-                                <NavButton path="/election">Election</NavButton>
-                                <NavButton path="/bookings">Booking</NavButton>
+                                {/* Common Links for All Authenticated Users */}
+                                {shouldShowDashboard && <NavButton path="/dashboard">Dashboard</NavButton>}
+                                <NavButton path={profileLink}>Profile</NavButton> {/* Dynamic Profile Link */}
+
+                                {/* Faculty-Specific Links */}
+                                {userType === 'faculty' && (
+                                    <>
+                                        <NavButton path="/faculty-dashboard">Faculty Dashboard</NavButton>
+                                        <NavButton path="/bookings">Booking</NavButton> {/* Booking for Faculty */}
+                                    </>
+                                )}
+
+                                {/* Admin-Specific Links */}
+                                {userType === 'admin' && (
+                                    <>
+                                        <NavButton path="/admin-dashboard">Admin Dashboard</NavButton>
+                                    </>
+                                )}
+
+                                {/* Doctor-Specific Links */}
+                                {userType === 'doctor' && (
+                                    <>
+                                        <NavButton path="/doctor-appointments">Appointments</NavButton>
+                                    </>
+                                )}
+
+                                {/* Student-Specific Links */}
+                                {isStudent && (
+                                    <>
+                                        <NavButton path="/election">Election</NavButton>
+                                    </>
+                                )}
+
+                                {/* Logout Button */}
                                 <NavButton path="/logout" isLogout={true}>Logout</NavButton>
                             </>
                         )}

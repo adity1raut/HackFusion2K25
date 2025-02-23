@@ -154,10 +154,10 @@ const CandidateElectionForm = () => {
   const fileInputClassName = "block w-full p-3 border-2 border-dashed border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-indigo-400 bg-gray-50 focus:bg-white";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden">
-          <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+    <div className="min-h-screen  bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
+      <div className="max-w-2xl pt-10 mx-auto px-4">
+        <div className="bg-white/90  backdrop-blur-sm rounded-xl shadow-xl overflow-hidden">
+          <div className="relative  bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
             <h1 className="text-2xl font-bold text-center text-white mb-2">
               Candidate Election Form
             </h1>

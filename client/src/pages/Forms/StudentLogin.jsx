@@ -26,7 +26,7 @@ const LoginForm = () => {
   }, []);
 
   if (AuthService.isAuthenticated()) {
-    return <Navigate to="/profile" />;
+    return <Navigate to="/student/profile" />;
   }
 
   const validateForm = () => {
@@ -83,6 +83,7 @@ const LoginForm = () => {
       if (success) {
         if (rememberMe) {
           localStorage.setItem('email', formData.email);
+          localStorage.setItem('type', formData.type);
         } 
         toast.success("Login successful! Redirecting...");
         setTimeout(() => {

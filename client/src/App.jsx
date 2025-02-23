@@ -37,7 +37,13 @@ import CheatingReports from "./components/Forms/CheatingFrom"
 import CheatingStudent from "./StudentDashBord/CheatingStudent"
 import StudentAppoiment from './components/Doctor/StudentAppoiment';
 import DoctorDashboard from './components/Doctor/DoctorDashboard';
-
+import DoctorLogin from "./pages/Forms/DoctorsLogin"
+import SecetryLogin from "./pages/Forms/SecetryLogin"
+import SecetrySingin from './pages/Forms/SecetrySingin';
+import AdminProfileCard from './pages/Profile/AdminProfileCard';
+import DoctorProfile from './pages/Profile/DoctoreProfile';
+import NoticeBord  from "./components/Forms/NoticeBord"
+import NoticeList from './components/Forms/NoticeList';
 function App() {
   return (
     <div>
@@ -50,10 +56,13 @@ function App() {
               <Route path="/signin" element={<SignUpPage />} />
               <Route path="/signin/student" element={<StudentSignUp />} />
               <Route path="/signin/faculty" element={<FacultySignup />} />
+              <Route path="/signin/secetry" element={<SecetrySingin/>} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/login/faculty" element={<FacultyLogin />} />
               <Route path="/login/student" element={<LoginForm />} />
               <Route path="/login/admin" element={<AdmiLogin />} />
+              <Route path="/login/doctor" element={<DoctorLogin />} />
+              <Route path="/login/secetry" element={<SecetryLogin/>} />
               <Route path="/forgot-password" element={<ForgetPassFrom />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route element={<PrivateRoute />}>
@@ -64,24 +73,29 @@ function App() {
                 <Route path='/dashboard/faculty-details' element={<FacultyBook/>} />
                 <Route path='/dashboard/election-details' element={<ElectionDetailsst />} />
                 <Route path='/dashboard/cheating-details' element={<CheatingStudent />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/student/profile" element={<ProfilePage />} />
                 <Route path="/election" element={<ElectionData />} />
-                <Route path="/complaints" element={<ComplaintsForm />} />
-                <Route path="/leave-application" element={<LeaveApplicationForm />} />
-                <Route path="/doctor-appointment" element={<DoctorAppointmentForm />} />
+                <Route path="/student/complaints" element={<ComplaintsForm />} />
+                <Route path="/student/leave-application" element={<LeaveApplicationForm />} />
+                <Route path="/student/election-form" element={<CandidateElectionForm />} />
                 <Route path="/bookings" element={<GroundBooking />} />
+                {/* <Route path="/studoctor-appointment" element={<DoctorAppointmentForm />} /> */}
                 <Route path='/faculty/profile' element={<FacultyProfile />} />
-                <Route path="/faculty-availability" element={<FacultyAvailabilityForm />} />
-                <Route path="/condidate-election-form" element={<CandidateElectionForm />} />
+                <Route path="/faculty/availability" element={<FacultyAvailabilityForm />} />
                 <Route path="/bookings/details/:name" element={<VenueDetails />} />
-                <Route path='/admin/dashboard/' element={<AdmiDhashbordPage />} />
+                <Route path='/admin-dashboard/' element={<AdmiDhashbordPage />} />
                 <Route path='/admin/dashboard/complaints' element={<AdminComplaintsDashboard />} />
                 <Route path='/admin/dashboard/leaves' element={<AdminLeaveDashboard />} />
                 <Route path='/admin/dashboard/election' element={<AdminElectionDashboard />} />
                 <Route path='/admin/dashboard/booking' element={<AdminBookingDashboard />} />
                 <Route path='/faculty/cheating' element={<CheatingReports />} />
-                <Route path='/student/appointment' element={<StudentAppoiment/>} />
-                <Route path='/student/doctor' element={<DoctorDashboard />} />
+                <Route path='/student/doctor/appointment' element={<StudentAppoiment/>} />
+                <Route path='/admin/profile' element={<AdminProfileCard />} />
+                <Route path='/doctor/profile' element={<DoctorProfile/>} />
+                <Route path='/doctor-appointments' element={<DoctorDashboard />} />
+                <Route path='/dashboard/notice' element={<NoticeBord />} />
+                <Route path='/admin/dashboard/notices' element={<NoticeList />} />
+
               </Route>
             </Routes>
           </div>

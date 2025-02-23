@@ -349,7 +349,7 @@ const FacultyProfile = () => {
             </Card>
             <Card>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link to="/faculty-availability">
+                <Link to="/faculty/availability">
                   <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     Update Availability
                   </button>

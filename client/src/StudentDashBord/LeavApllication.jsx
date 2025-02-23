@@ -85,7 +85,7 @@ const LeaveApplication = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex items-center justify-center pt-20 min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-5xl border border-gray-300 rounded-lg shadow-sm p-6 bg-white hover:shadow-md transition-all duration-300">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

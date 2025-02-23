@@ -11,12 +11,12 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-const FacultySignup = () => {
+const SecetrySingin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    type: "admin"
+    type: ""
   });
 
   const [otpForm, setOtpForm] = useState({
@@ -347,8 +347,12 @@ const FacultySignup = () => {
                 } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 required
               >
-                <option value="faculty">....</option>
-                <option value="faculty">faculty</option>
+                
+                <option value="">....</option>
+                <option value="secretary">secretary</option>
+                <option value="club">club</option>
+                <option value="doctor">doctor</option>
+                <option value="admin">admin</option>
               </select>
               {errors.type && (
                 <p className="mt-1 text-sm text-red-600">{errors.type}</p>
@@ -458,4 +462,4 @@ const FacultySignup = () => {
   );  
   }
 
-export default FacultySignup;
+export default SecetrySingin;

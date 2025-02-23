@@ -84,7 +84,7 @@ const VenueBooking = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="pt-20 flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-6xl border border-gray-300 rounded-lg shadow-sm p-6 bg-white hover:shadow-md transition-all duration-300">
         {/* Header with Refresh Button */}
         <div className="flex items-center justify-between mb-6">

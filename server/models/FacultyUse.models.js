@@ -30,7 +30,7 @@ const facultySchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['faculty', 'secretary', 'club'],
+    enum: ['faculty', 'secretary', 'club' , "doctor", "admin"],
     default: 'faculty'
   },
   position: {

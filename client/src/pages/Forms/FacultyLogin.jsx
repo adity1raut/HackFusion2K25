@@ -84,6 +84,8 @@ const FacultyLogin = () => {
 
       if (success) {
         localStorage.setItem('email', formData.email);
+        localStorage.setItem("type" ,  formData.type);
+        
         toast.success("Login successful! Redirecting...");
                 setTimeout(() => {
                   navigate('/profile');
@@ -153,9 +155,7 @@ const FacultyLogin = () => {
               } rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500`}
             >
               <option value="">Select Account Type</option>
-              <option value="faculty">Faculty</option>
-              <option value="secretary">Secretary</option>
-              <option value="club">Club</option>
+              <option value="faculty">faculty</option>
             </select>
             {errors.type && (
               <p className="mt-1 text-sm text-red-600">{errors.type}</p>

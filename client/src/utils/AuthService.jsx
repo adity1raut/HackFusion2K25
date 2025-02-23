@@ -29,18 +29,19 @@ const AuthService = {
     },
     facultylogin: async (email, type, password) => {
         try {
+            // console.log(email, type, password);
             const response = await axios.post('/api/faculty/login', {
                 email,
                 type: type,
                 password
             });
+            console.log(response.data.type)
 
             if (response.data.success) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('email', response.data.email);
                 localStorage.setItem('type', response.data.type);
                 
-                // Dispatch auth change event
                 window.dispatchEvent(new Event("authChange"));
                 return true;
             }

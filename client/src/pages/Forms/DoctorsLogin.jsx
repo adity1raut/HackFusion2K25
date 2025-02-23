@@ -9,7 +9,7 @@ import {
 import AuthService from "../../utils/AuthService";
 import { toast , ToastContainer } from 'react-toastify';
 
-const AdmiLogin = () => {
+const DoctorsLogin = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -89,7 +89,7 @@ const AdmiLogin = () => {
                 setTimeout(() => {
                   navigate('/profile');
                 }, 2000);
-        window.location.href = '/admin/profile';
+        window.location.href = '/doctor/profile';
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
@@ -105,7 +105,7 @@ const AdmiLogin = () => {
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 flex items-center justify-center gap-2">
             <User className="w-8 h-8 text-blue-600" />
-            Admin Login
+            Doctor Login
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             Sign in to your account
@@ -154,7 +154,7 @@ const AdmiLogin = () => {
               } rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500`}
             >
               <option value="">Select Account Type</option>
-              <option value="admin">admin</option>
+              <option value="doctor">doctor</option>
             </select>
             {errors.type && (
               <p className="mt-1 text-sm text-red-600">{errors.type}</p>
@@ -234,4 +234,4 @@ const AdmiLogin = () => {
   );
 };
 
-export default AdmiLogin;
+export default DoctorsLogin;
