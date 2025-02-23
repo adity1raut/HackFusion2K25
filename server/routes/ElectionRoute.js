@@ -36,6 +36,7 @@ router.post('/api/election/send-otp', async (req, res) => {
             otpStore.delete(email);
         }, OTP_EXPIRATION_TIME);
         
+        console.log(otp)
         // Send email with OTP only (remove password from email)
         const mailOptions = {
             from: process.env.EMAIL_FROM,

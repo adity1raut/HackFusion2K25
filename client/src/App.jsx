@@ -44,6 +44,8 @@ import AdminProfileCard from './pages/Profile/AdminProfileCard';
 import DoctorProfile from './pages/Profile/DoctoreProfile';
 import NoticeBord  from "./components/Forms/NoticeBord"
 import NoticeList from './components/Forms/NoticeList';
+import ElectionDashboard from './pages/Profile/ElectionDashboard';
+import VotingDetails from './components/Details/VotingDetails';
 function App() {
   return (
     <div>
@@ -95,8 +97,9 @@ function App() {
                 <Route path='/doctor-appointments' element={<DoctorDashboard />} />
                 <Route path='/dashboard/notice' element={<NoticeBord />} />
                 <Route path='/admin/dashboard/notices' element={<NoticeList />} />
-
+                <Route path='/admin/election'element={<ElectionDashboard />} />
               </Route>
+              <Route path="/voting" element={<VotingDetails />} />
             </Routes>
           </div>
           <Footer />

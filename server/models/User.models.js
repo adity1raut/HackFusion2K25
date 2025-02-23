@@ -45,6 +45,10 @@ const UserSchema = new mongoose.Schema(
         type: Date,
         default: Date
     },
+    isvoted :{
+      type: Boolean,
+      default: false,
+    } ,
 
     isAdmin: {
       type: Boolean,
