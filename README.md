@@ -31,8 +31,7 @@ This stack ensures a scalable and maintainable application, aligning with indust
 
 For reference and potential collaboration, consider exploring these projects:
 
-- [College Management System](https://github.com/krish-7104/College-Management-System)
-- [MERN College Management System](https://github.com/AbhigyannSingh/MERN-College-Management-System-main)
+- [College Management System](https://github.com/adity1raut/HackFusion2K25)
 
 ## Contributions and Feedback
 
