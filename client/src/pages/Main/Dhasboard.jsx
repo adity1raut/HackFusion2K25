@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Calendar, FileText, MessageSquare, DollarSign, Users } from 'lucide-react'; // Added Users icon
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ElectionDashboard from '../Profile/ElectionDashboard';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -251,6 +252,7 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
+      {/* <ElectionDashboard /> */}
     </div>
   )}
 export default Dashboard;

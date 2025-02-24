@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -16,6 +16,7 @@ const StudentSignUp = () => {
   });
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     setFormData({
@@ -29,7 +30,7 @@ const StudentSignUp = () => {
     const emailPattern = /@sggs\.ac\.in$/;
     const rollnoPattern = /^\d{4}[a-zA-Z]{3}\d{3}$/;
 
-    if (!name || !rollno || !email ) {
+    if (!name || !rollno || !email) {
       toast.error("All fields are required.");
       return false;
     }
@@ -77,10 +78,10 @@ const StudentSignUp = () => {
         const response = await axios.post("http://localhost:4000/api/users", {
           ...formData
         });
-        if (response.status === 200) {
+        if (response.status === 201) {
           toast.success("Account created successfully!");
           setTimeout(() => {
-            window.location.href = "/login";
+            navigate("/login"); // Navigate to login page after 2 seconds
           }, 2000);
         }
       }
@@ -100,10 +101,9 @@ const StudentSignUp = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Form Fields */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Full Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Full Name</label>
             <input
               type="text"
               name="name"
@@ -116,9 +116,7 @@ const StudentSignUp = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Roll Number
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Roll Number</label>
             <input
               type="text"
               name="rollno"
@@ -131,9 +129,7 @@ const StudentSignUp = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              College Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700">College Email</label>
             <input
               type="email"
               name="email"
@@ -145,13 +141,10 @@ const StudentSignUp = () => {
             />
           </div>
 
-
           {otpSent && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  OTP
-                </label>
+                <label className="block text-sm font-medium text-gray-700">OTP</label>
                 <input
                   type="text"
                   name="otp"
@@ -164,9 +157,7 @@ const StudentSignUp = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Password</label>
                 <input
                   type="password"
                   name="password"
@@ -179,9 +170,7 @@ const StudentSignUp = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Confirm Password
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -198,8 +187,7 @@ const StudentSignUp = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
-          >
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed">
             {loading ? 'Processing...' : otpSent ? 'Create Account' : 'Send OTP'}
           </button>
         </form>

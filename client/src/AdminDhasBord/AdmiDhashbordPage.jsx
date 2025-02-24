@@ -1,6 +1,7 @@
 import React from 'react';
 import { User, Calendar, FileText, MessageSquare, DollarSign, Users, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ElectionDashboard from '../pages/Profile/ElectionDashboard';
 
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
@@ -108,6 +109,7 @@ const AdminDashboardPage = () => {
           </button>
         </div>
       </div>
+      {/* <ElectionDashboard/> */}
     </div>
   );
 };

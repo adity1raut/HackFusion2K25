@@ -117,23 +117,7 @@ router.get('/api/election-candidates/check-vote/:userId', async (req, res) => {
         });
     }
 });
-router.get('/api/election-candidates', async (req, res) => {
-    try {
-        const candidates = await ElectionCandidate.find({});
-        res.status(200).json(candidates);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch candidates', error });
-    }
-});
-router.get('/api/user-stats', async (req, res) => {
-    try {
-      const stats = await UserStats.findOne({});
-      res.json(stats);
-    } catch (error) {
-      console.error('Error fetching user stats:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
+
 // Route to get voting statistics by position
 router.get('/api/election-candidates/stats', async (req, res) => {
     try {

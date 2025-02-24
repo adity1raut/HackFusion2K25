@@ -13,7 +13,7 @@ function ElectionData() {
     email: '',
     otp: '',
     password: '',
-    rollno: '',
+    rollno: '', // Removed the 'name' field
   });
 
   // Refs for input fields
@@ -32,16 +32,9 @@ function ElectionData() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    let newValue = value;
-    
-    // Special handling for OTP - only allow numbers
-    if (name === 'otp') {
-      newValue = value.replace(/[^0-9]/g, '').slice(0, 6);
-    }
-    
     setFormData(prev => ({
       ...prev,
-      [name]: newValue
+      [name]: value
     }));
   };
 
@@ -176,8 +169,7 @@ function ElectionData() {
         throw new Error(error.message || 'Roll number verification failed');
       }
 
-      const data = await response.json();
-      toast.success('Verification complete! You can now vote.');
+      toast.success('Roll number verified successfully');
       setStep(5);
       setShowVotingPortal(true);
       // Hide verification form after successful verification
@@ -191,13 +183,17 @@ function ElectionData() {
   };
 
   const VerificationStep = ({ currentStep, title, children }) => (
-    <div className={`bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 border border-gray-100 mt-4 
-      ${step > currentStep ? 'opacity-50' : ''}`}>
+    <div
+      className={`bg-white/90 backdrop-blur-sm shadow-xl rounded-lg p-8 border border-gray-100 mt-4 
+        ${step > currentStep ? 'opacity-50' : ''}`}
+    >
       <div className="flex items-center gap-3 mb-6 pb-2 border-b border-gray-200">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-          ${step > currentStep ? 'bg-green-100 text-green-600' : 
-            step === currentStep ? 'bg-blue-500 text-white' : 
-            'bg-gray-100 text-gray-400'}`}>
+        <div
+          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+            ${step > currentStep ? 'bg-green-100 text-green-600' : 
+              step === currentStep ? 'bg-blue-500 text-white' : 
+              'bg-gray-100 text-gray-400'}`}
+        >
           {step > currentStep ? '✓' : currentStep}
         </div>
         <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
@@ -225,7 +221,7 @@ function ElectionData() {
             </div>
           </div>
         )}
-        
+
         {showVerification && (
           <div className="space-y-4">
             <VerificationStep currentStep={1} title="Verify Email">
@@ -320,7 +316,7 @@ function ElectionData() {
         )}
 
         {showVotingPortal && (
-          <div className="mt-8 mb-16 w-">
+          <div className="mt-8 mb-16">
             <VotingDetails />
           </div>
         )}

@@ -8,7 +8,6 @@ import Dhasboard from './pages/Main/Dhasboard';
 import ForgetPassFrom from './pages/Forms/ForgetPassFrom';
 import ComplaintsForm from "./components/Forms/ComplaintsForm";
 import LeaveApplicationForm from './components/Forms/LeaveApplicationForm';
-import DoctorAppointmentForm from './components/Doctor/DoctorAppointmentForm';
 import FacultyAvailabilityForm from './components/Other/FacultyAvailabilityForm';
 import ElectionData from './components/Other/ElectionData';
 import StudentSignUp from "./pages/Forms/StudentSignUp"
@@ -46,6 +45,7 @@ import NoticeBord  from "./components/Forms/NoticeBord"
 import NoticeList from './components/Forms/NoticeList';
 import ElectionDashboard from './pages/Profile/ElectionDashboard';
 import VotingDetails from './components/Details/VotingDetails';
+import ElectionCandidate from '../../server/models/ElectionCandidate';
 function App() {
   return (
     <div>
@@ -97,7 +97,8 @@ function App() {
                 <Route path='/doctor-appointments' element={<DoctorDashboard />} />
                 <Route path='/dashboard/notice' element={<NoticeBord />} />
                 <Route path='/admin/dashboard/notices' element={<NoticeList />} />
-                <Route path='/admin/election'element={<ElectionDashboard />} />
+                <Route path='/admin/dashboard/election'element={<ElectionDashboard />} />
+                <Route path='/dashboard/el' element={<ElectionCandidate />} />
               </Route>
               <Route path="/voting" element={<VotingDetails />} />
             </Routes>

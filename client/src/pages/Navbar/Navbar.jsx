@@ -87,7 +87,7 @@ const Navbar = () => {
     const shouldShowDashboard = !['admin', 'doctor'].includes(userType);
 
     return (
-        <div className="fixed top-0 z-50 w-full bg-gradient-to-br to-blue-700 to-blue-600 shadow-lg">
+        <div className="fixed top-0 z-50 w-full bg-blue-500 shadow-lg">
             <nav className="container mx-auto px-4 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
@@ -138,7 +138,8 @@ const Navbar = () => {
                                 {/* Student-Specific Links */}
                                 {isStudent && (
                                     <>
-                                        <NavButton  className="bg-blue-400" path="/election">Vote</NavButton>
+                                        <NavButton path="/election">Vote</NavButton>
+                                        <NavButton path="/bookings">Booking</NavButton> {/* Booking for Students */}
                                     </>
                                 )}
 
@@ -206,6 +207,7 @@ const Navbar = () => {
                                 {isStudent && (
                                     <>
                                         <NavButton path="/election">Election</NavButton>
+                                        <NavButton path="/bookings">Booking</NavButton> {/* Booking for Students */}
                                     </>
                                 )}
 

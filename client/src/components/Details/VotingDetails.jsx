@@ -8,41 +8,92 @@ const VotingDetails = () => {
     'Cultural Secretary': { candidates: [], hasVoted: false, selectedCandidate: null },
     'Girls Representative': { candidates: [], hasVoted: false, selectedCandidate: null }
   });
+  const [userId, setUserId] = useState(null);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
         const response = await fetch('http://localhost:4000/api/election-candidates');
+        if (!response.ok) {
+          throw new Error('Failed to fetch candidates');
+        }
         const data = await response.json();
 
-        const newElections = { ...elections };
+        // Initialize newElections with empty candidates arrays
+        const newElections = Object.keys(elections).reduce((acc, position) => {
+          acc[position] = { candidates: [], hasVoted: false, selectedCandidate: null };
+          return acc;
+        }, {});
+
+        // Group candidates by position
         data.forEach((candidate) => {
           if (newElections[candidate.position]) {
-            newElections[candidate.position].candidates.push(candidate);
+            newElections[candidate.position].candidates.push({
+              ...candidate,
+              // Add a unique identifier combining position and registration number
+              uniqueId: `${candidate.position}-${candidate.regNo}`
+            });
           }
         });
 
         setElections(newElections);
       } catch (error) {
+        setError('Failed to load candidates. Please try again later.');
         console.error('Error fetching candidates:', error);
       }
     };
 
+    // Check user's voting status
+    const checkVotingStatus = async () => {
+      if (!userId) return;
+      
+      try {
+        const response = await fetch(`http://localhost:4000/api/election-candidates/check-vote/${userId}`);
+        if (!response.ok) {
+          throw new Error('Failed to check voting status');
+        }
+        const data = await response.json();
+        
+        if (data.hasVoted) {
+          setElections(prev => {
+            const newState = { ...prev };
+            Object.keys(newState).forEach(position => {
+              newState[position].hasVoted = true;
+            });
+            return newState;
+          });
+        }
+      } catch (error) {
+        console.error('Error checking voting status:', error);
+      }
+    };
+
     fetchCandidates();
-  }, []);
+    checkVotingStatus();
+  }, [userId]);
 
   const handleVote = async (position, candidate) => {
-    const election = elections[position];
+    if (!userId) {
+      setError('Please log in to vote');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:4000/api/election-candidates/vote', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ regNo: candidate.regNo })
+        body: JSON.stringify({ 
+          regNo: candidate.regNo,
+          userId: userId,
+          position: position // Added position to ensure correct vote counting
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update vote');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update vote');
       }
 
       // Update local state
@@ -51,8 +102,8 @@ const VotingDetails = () => {
         [position]: {
           ...prev[position],
           candidates: prev[position].candidates.map(c => {
-            if (c.regNo === candidate.regNo) {
-              return { ...c, votes: c.votes + 1 };
+            if (c.uniqueId === candidate.uniqueId) {
+              return { ...c, votes: (c.votes || 0) + 1 };
             }
             return c;
           }),
@@ -60,7 +111,12 @@ const VotingDetails = () => {
           selectedCandidate: candidate.regNo
         }
       }));
+
+      setSuccessMessage('Vote recorded successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
+      setError(error.message);
+      setTimeout(() => setError(null), 3000);
       console.error('Error voting:', error);
     }
   };
@@ -68,13 +124,11 @@ const VotingDetails = () => {
   const CandidateGrid = ({ candidates, hasVoted, selectedCandidate, position }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {candidates.map((candidate) => {
-        // Check if voting should be disabled
-        const isVotingDisabled = 
-          (hasVoted && selectedCandidate !== candidate.regNo); // Only disable if the user has voted for this specific position
+        const isVotingDisabled = hasVoted && selectedCandidate !== candidate.regNo;
 
         return (
           <div
-            key={candidate.regNo}
+            key={candidate.uniqueId}
             className={`bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl ${
               selectedCandidate === candidate.regNo ? 'ring-2 ring-indigo-500' : ''
             }`}
@@ -142,6 +196,18 @@ const VotingDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto pt-20 space-y-12">
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
+            <p className="text-green-700">{successMessage}</p>
+          </div>
+        )}
+
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Student Elections Dashboard</h1>
           <p className="text-lg text-gray-600">Cast your vote for student representatives</p>
