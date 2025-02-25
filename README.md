@@ -25,13 +25,7 @@ Developed during a 36-hour hackathon, this comprehensive application streamlines
 - **Backend**: Node.js with Express.js
 - **Database**: MongoDB
 
-This stack ensures a scalable and maintainable application, aligning with industry standards.
-
-## Similar Projects
-
-For reference and potential collaboration, consider exploring these projects:
-
-- [College Management System](https://github.com/adity1raut/HackFusion2K25)
+This stack ensures a scalable and maintainable application, aligning with industry standards 
 
 ## Contributions and Feedback
 
