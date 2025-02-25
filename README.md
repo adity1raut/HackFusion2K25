@@ -21,7 +21,7 @@ Developed during a 36-hour hackathon, this comprehensive application streamlines
 
 ## Technology Stack
 
-- **Frontend**: React.js
+- **Frontend**: React.js , tailwind css , lucide-react
 - **Backend**: Node.js with Express.js
 - **Database**: MongoDB
 
